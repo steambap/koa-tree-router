@@ -25,18 +25,18 @@ class node {
    * @param {number} maxParams
    * @param {string} indices
    * @param {node[]} children
-   * @param {function=} handle
+   * @param {function[]=} handle
    * @param {number} priority
    */
   constructor(
-    path,
-    wildChild,
-    type,
-    maxParams,
-    indices,
-    children,
-    handle,
-    priority
+    path = "",
+    wildChild = false,
+    type = STATIC,
+    maxParams = 0,
+    indices = "",
+    children = [],
+    handle = null,
+    priority = 0
   ) {
     this.path = path;
     this.wildChild = wildChild;
@@ -79,7 +79,7 @@ class node {
   /**
    * Adds a node with the given handle to the path
    * @param {string} path
-   * @param {function} handle
+   * @param {function[]} handle
    */
   addRoute(path, handle) {
     let n = this;
@@ -149,7 +149,7 @@ class node {
             if (
               path.length >= n.path.length &&
               n.path === path.slice(0, n.path.length) &&
-              (n.pth.length >= path.length || path[n.pth.length] === "/")
+              (n.path.length >= path.length || path[n.path.length] === "/")
             ) {
               continue walk;
             } else {
@@ -183,7 +183,7 @@ class node {
           for (let j = 0; j < n.indices.length; j++) {
             if (c === n.indices[j]) {
               j = n.addPriority(j);
-              n = n.children[0];
+              n = n.children[j];
               continue walk;
             }
           }
@@ -229,7 +229,7 @@ class node {
    * @param {number} numParams
    * @param {string} path
    * @param {string} fullPath
-   * @param {function} handle
+   * @param {function[]} handle
    */
   insertChild(numParams, path, fullPath, handle) {
     let n = this;

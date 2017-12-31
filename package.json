@@ -4,7 +4,7 @@
   "description": "A high performance koa router",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -30,8 +30,9 @@
   "devDependencies": {
     "beautify-benchmark": "^0.2.4",
     "benchmark": "^2.1.4",
+    "expect": "^22.0.3",
     "find-my-way": "^1.8.2",
-    "jest": "^22.0.4",
-    "koa-router": "^7.3.0"
+    "koa-router": "^7.3.0",
+    "mocha": "^4.1.0"
   }
 }
