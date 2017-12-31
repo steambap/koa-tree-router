@@ -1,0 +1,37 @@
+{
+  "name": "koa-tree-router",
+  "version": "0.0.1",
+  "description": "A high performance koa router",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/steambap/koa-tree-router.git"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "keywords": [
+    "koa",
+    "router",
+    "middleware",
+    "fast",
+    "radix",
+    "tree"
+  ],
+  "author": "Weilin Shi <934587911@qq.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/steambap/koa-tree-router/issues"
+  },
+  "homepage": "https://github.com/steambap/koa-tree-router#readme",
+  "devDependencies": {
+    "beautify-benchmark": "^0.2.4",
+    "benchmark": "^2.1.4",
+    "find-my-way": "^1.8.2",
+    "jest": "^22.0.4",
+    "koa-router": "^7.3.0"
+  }
+}
