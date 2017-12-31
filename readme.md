@@ -16,3 +16,16 @@ The router relies on a tree structure which makes heavy use of *common prefixes*
 
 This module's tree implementation is based on [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter).
 
+## Usage
+
+```JS
+const app = new Koa();
+const router = new Router();
+router.get("/", function(ctx) {
+  ctx.body = "hello, world";
+});
+
+app.use(router.routes());
+
+app.listen(8080);
+```

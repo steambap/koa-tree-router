@@ -1,3 +1,4 @@
+const compose = require("koa-compose");
 const Node = require("./tree");
 const httpMethods = [
   "DELETE",
@@ -19,13 +20,13 @@ function Router() {
   this.trees = [];
 }
 
-Router.prototype.on = function(method, path, handle) {
+Router.prototype.on = function(method, path, ...handle) {
   if (path[0] !== "/") {
     throw new Error("path must begin with '/' in path");
   }
 
   if (!this.trees[method]) {
-    this.trees[method] = new Node("", false, 0, 0, "", [], null, 0);
+    this.trees[method] = new Node();
   }
 
   this.trees[method].addRoute(path, handle);
@@ -33,20 +34,20 @@ Router.prototype.on = function(method, path, handle) {
   return this;
 };
 
-Router.prototype.get = function(path, handle) {
-  return this.on("GET", path, handle);
+Router.prototype.get = function(...arg) {
+  return this.on("GET", ...arg);
 };
 
-Router.prototype.put = function(path, handle) {
-  return this.on("PUT", path, handle);
+Router.prototype.put = function(...arg) {
+  return this.on("PUT", ...arg);
 };
 
-Router.prototype.post = function(path, handle) {
-  return this.on("POST", path, handle);
+Router.prototype.post = function(...arg) {
+  return this.on("POST", ...arg);
 };
 
-Router.prototype.delete = function(path, handle) {
-  return this.on("DELETE", path, handle);
+Router.prototype.delete = function(...arg) {
+  return this.on("DELETE", ...arg);
 };
 
 Router.prototype.find = function(method, path) {
@@ -56,6 +57,26 @@ Router.prototype.find = function(method, path) {
   }
 
   return { handle: null, params: [] };
+};
+
+Router.prototype.routes = Router.prototype.middleware = function() {
+  const router = this;
+
+  const handle = function(ctx, next) {
+    const {handle, params} = router.find(ctx.method, ctx.path);
+    if (!handle) {
+      return next();
+    }
+
+    ctx.params = {};
+    params.forEach(({key, value}) => {
+      ctx.params.key = value;
+    });
+
+    return compose(handle)(ctx, next);
+  };
+
+  return handle;
 };
 
 module.exports = Router;

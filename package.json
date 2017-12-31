@@ -32,7 +32,12 @@
     "benchmark": "^2.1.4",
     "expect": "^22.0.3",
     "find-my-way": "^1.8.2",
+    "koa": "^2.4.1",
     "koa-router": "^7.3.0",
-    "mocha": "^4.1.0"
+    "mocha": "^4.1.0",
+    "supertest": "^3.0.0"
+  },
+  "dependencies": {
+    "koa-compose": "^4.0.0"
   }
 }
