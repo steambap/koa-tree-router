@@ -1,6 +1,6 @@
 {
   "name": "koa-tree-router",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "A high performance koa router",
   "main": "router.js",
   "scripts": {
@@ -13,6 +13,11 @@
   "engines": {
     "node": ">=6"
   },
+  "files": [
+    "*.js",
+    "*.md",
+    "index.d.ts"
+  ],
   "keywords": [
     "koa",
     "router",
@@ -27,6 +32,7 @@
     "url": "https://github.com/steambap/koa-tree-router/issues"
   },
   "homepage": "https://github.com/steambap/koa-tree-router#readme",
+  "typings": "index.d.ts",
   "devDependencies": {
     "beautify-benchmark": "^0.2.4",
     "benchmark": "^2.1.4",
