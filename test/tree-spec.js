@@ -213,3 +213,15 @@ describe("Wildcard", () => {
     });
   });
 });
+
+describe("Invalid", () => {
+  it("node type", () => {
+    const tree = new Tree();
+    tree.addRoute("/", noOp);
+    tree.addRoute("/:page", noOp);
+
+    tree.children[0].type = 42;
+
+    expect(() => tree.search("/test")).toThrow();
+  });
+});
