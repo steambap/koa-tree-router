@@ -2,7 +2,7 @@
   "name": "koa-tree-router",
   "version": "0.0.1",
   "description": "A high performance koa router",
-  "main": "index.js",
+  "main": "router.js",
   "scripts": {
     "test": "mocha"
   },

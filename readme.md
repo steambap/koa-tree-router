@@ -19,6 +19,9 @@ This module's tree implementation is based on [julienschmidt/httprouter](https:/
 ## Usage
 
 ```JS
+const Koa = require("koa");
+const Router = require("koa-tree-router");
+
 const app = new Koa();
 const router = new Router();
 router.get("/", function(ctx) {

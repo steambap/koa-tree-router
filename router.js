@@ -70,7 +70,7 @@ Router.prototype.routes = Router.prototype.middleware = function() {
 
     ctx.params = {};
     params.forEach(({key, value}) => {
-      ctx.params.key = value;
+      ctx.params[key] = value;
     });
 
     return compose(handle)(ctx, next);
