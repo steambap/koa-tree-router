@@ -12,12 +12,13 @@ const httpMethods = [
   "CONNECT"
 ];
 
-function Router() {
+function Router(opts = {}) {
   if (!(this instanceof Router)) {
-    return new Router();
+    return new Router(opts);
   }
 
-  this.trees = [];
+  this.trees = {};
+  this.opts = opts;
 }
 
 Router.prototype.on = function(method, path, ...handle) {
@@ -50,6 +51,32 @@ Router.prototype.delete = function(...arg) {
   return this.on("DELETE", ...arg);
 };
 
+Router.prototype.head = function(...arg) {
+  return this.on("HEAD", ...arg);
+};
+
+Router.prototype.patch = function(...arg) {
+  return this.on("PATCH", ...arg);
+};
+
+Router.prototype.options = function(...arg) {
+  return this.on("OPTIONS", ...arg);
+};
+
+Router.prototype.trace = function(...arg) {
+  return this.on("TRACE", ...arg);
+};
+
+Router.prototype.connect = function(...arg) {
+  return this.on("CONNECT", ...arg);
+};
+
+Router.prototype.all = function(...arg) {
+  httpMethods.forEach(method => {
+    this.on(method, ...arg);
+  });
+};
+
 Router.prototype.find = function(method, path) {
   const tree = this.trees[method];
   if (tree) {
@@ -63,13 +90,29 @@ Router.prototype.routes = Router.prototype.middleware = function() {
   const router = this;
 
   const handle = function(ctx, next) {
-    const {handle, params} = router.find(ctx.method, ctx.path);
+    const { handle, params } = router.find(ctx.method, ctx.path);
     if (!handle) {
+      const handle405 = router.opts.onMethodNotAllowed;
+      if (handle405) {
+        for (let key in router.trees) {
+          if (key === ctx.method) {
+            continue;
+          }
+
+          const tree = router.trees[key];
+          if (tree.search(ctx.path).handle !== null) {
+            ctx.status = 405;
+
+            return handle405(ctx, next);
+          }
+        }
+      }
+
       return next();
     }
 
     ctx.params = {};
-    params.forEach(({key, value}) => {
+    params.forEach(({ key, value }) => {
       ctx.params[key] = value;
     });
 

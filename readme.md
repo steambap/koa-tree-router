@@ -4,7 +4,7 @@ Koa tree router a high performance router for Koa.
 
 ## Features
 
-- Fast. Up to 12 times faster than Koa-router. 
+- Fast. Up to 12 times faster than Koa-router. [Benchmark](benchmark/index.js)
 
 - Express routing using `router.get`, `router.put`, `router.post`, etc.
 

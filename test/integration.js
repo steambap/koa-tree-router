@@ -42,4 +42,27 @@ describe("Router", () => {
         done(err);
       });
   });
+
+  it("support 405 method not allowed", done => {
+    const resBody = { msg: "not allowed" };
+    const app = new Koa();
+    const router = new Router({
+      onMethodNotAllowed(ctx) {
+        ctx.body = resBody;
+      }
+    });
+    router.get("/", function(ctx) {
+      ctx.body = "ok";
+    });
+
+    app.use(router.routes());
+
+    request(app.callback())
+      .post("/")
+      .expect(405)
+      .end(function(_, res) {
+        expect(res.body).toMatchObject(resBody);
+        done();
+      });
+  });
 });
