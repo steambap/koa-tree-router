@@ -65,4 +65,32 @@ describe("Router", () => {
         done();
       });
   });
+
+  it("handle #", done => {
+    const app = new Koa();
+    const router = new Router();
+    router.get("/test", function(ctx) {
+      ctx.body = "ok";
+    });
+
+    app.use(router.routes());
+
+    request(app.callback())
+      .get("/test#id")
+      .expect(200, done);
+  });
+
+  it("handle ?", done => {
+    const app = new Koa();
+    const router = new Router();
+    router.get("/test", function(ctx) {
+      ctx.body = "ok";
+    });
+
+    app.use(router.routes());
+
+    request(app.callback())
+      .get("/test?id=test")
+      .expect(200, done);
+  });
 });
