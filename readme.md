@@ -95,3 +95,42 @@ router.get("/user/:name", function() {
 ctx.params.name
 // => "1"
 ```
+
+## How to write routes
+There are 3 types of routes:
+
+1.Static
+```
+Pattern: /static
+
+ /static                   match
+ /anything-else            no match
+```
+
+2.Named
+
+Named parameters have the form `:name` and only match a single path segment:
+```
+Pattern: /user/:user
+
+ /user/gordon              match
+ /user/you                 match
+ /user/gordon/profile      no match
+ /user/                    no match
+```
+
+3.Catch-all
+
+Catch-all parameters have the form `*name` and match everything. They must always be at the **end** of the pattern:
+
+```
+Pattern: /src/*filepath
+
+ /src/                     match
+ /src/somefile.go          match
+ /src/subdir/somefile.go   match
+```
+
+## License
+
+[MIT](LICENSE)
