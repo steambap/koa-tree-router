@@ -66,6 +66,29 @@ describe("Router", () => {
       });
   });
 
+  it("support prefixing all routes", done => {
+    const app = new Koa();
+    const router = new Router({ prefix: '/api' });
+
+    router.get("/", function(ctx) {
+      ctx.body = "ok";
+    });
+
+    router.get("/cars", function(ctx) {
+      ctx.body = "ok";
+    });
+
+    app.use(router.routes());
+
+    request(app.callback())
+      .get("/api/")
+      .expect(200);
+
+    request(app.callback())
+      .get("/api/cars")
+      .expect(200, done);
+  });
+
   it("handle #", done => {
     const app = new Koa();
     const router = new Router();
