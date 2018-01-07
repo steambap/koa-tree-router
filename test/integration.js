@@ -80,13 +80,16 @@ describe("Router", () => {
 
     app.use(router.routes());
 
-    request(app.callback())
-      .get("/api/")
-      .expect(200);
+    const callback = app.callback();
 
-    request(app.callback())
-      .get("/api/cars")
-      .expect(200, done);
+    request(callback)
+      .get("/api/")
+      .expect(200)
+      .end(() => {
+        request(callback)
+          .get("/api/cars")
+          .expect(200, done);
+      });
   });
 
   it("handle #", done => {
