@@ -35,7 +35,7 @@ Router.prototype.on = function(method, path, ...handle) {
   }
 
   if (this.opts.prefix) {
-    path = this.opts.prefix + path
+    path = this.opts.prefix + path;
   }
 
   this.trees[method].addRoute(path, handle);
