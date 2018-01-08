@@ -17,6 +17,10 @@ function Router(opts = {}) {
     return new Router(opts);
   }
 
+  if (opts.prefix && opts.prefix[0] !== "/") {
+    throw new Error("prefix must begin with '/' in path");
+  }
+
   this.trees = {};
   this.opts = opts;
 }
@@ -28,6 +32,10 @@ Router.prototype.on = function(method, path, ...handle) {
 
   if (!this.trees[method]) {
     this.trees[method] = new Node();
+  }
+
+  if (this.opts.prefix) {
+    path = this.opts.prefix + path;
   }
 
   this.trees[method].addRoute(path, handle);

@@ -12,6 +12,7 @@ declare namespace Router {
   }
   export interface IRouterOptions {
     onMethodNotAllowed?: Router.IMiddleware;
+    prefix?: string;
   }
   export interface IRouterContext extends Koa.Context {
     /**
