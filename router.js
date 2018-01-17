@@ -83,6 +83,8 @@ Router.prototype.all = function(...arg) {
   httpMethods.forEach(method => {
     this.on(method, ...arg);
   });
+
+  return this;
 };
 
 Router.prototype.find = function(method, path) {

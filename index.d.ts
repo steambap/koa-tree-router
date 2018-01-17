@@ -30,47 +30,51 @@ declare class Router {
   /**
    * Register a new route.
    */
-  on(method: string, path: string, ...middleware: Array<Router.IMiddleware>);
+  on(
+    method: string,
+    path: string,
+    ...middleware: Array<Router.IMiddleware>
+  ): this;
   /**
    * HTTP GET method
    */
-  get(path: string, ...middleware: Array<Router.IMiddleware>);
+  get(path: string, ...middleware: Array<Router.IMiddleware>): this;
   /**
    * HTTP POST method
    */
-  post(path: string, ...middleware: Array<Router.IMiddleware>);
+  post(path: string, ...middleware: Array<Router.IMiddleware>): this;
   /**
    * HTTP PUT method
    */
-  put(path: string, ...middleware: Array<Router.IMiddleware>);
+  put(path: string, ...middleware: Array<Router.IMiddleware>): this;
   /**
    * HTTP DELETE method
    */
-  delete(path: string, ...middleware: Array<Router.IMiddleware>);
+  delete(path: string, ...middleware: Array<Router.IMiddleware>): this;
   /**
    * HTTP HEAD method
    */
-  head(path: string, ...middleware: Array<Router.IMiddleware>);
+  head(path: string, ...middleware: Array<Router.IMiddleware>): this;
   /**
    * HTTP OPTIONS method
    */
-  options(path: string, ...middleware: Array<Router.IMiddleware>);
+  options(path: string, ...middleware: Array<Router.IMiddleware>): this;
   /**
    * HTTP PATCH method
    */
-  patch(path: string, ...middleware: Array<Router.IMiddleware>);
+  patch(path: string, ...middleware: Array<Router.IMiddleware>): this;
   /**
    * HTTP TRACE method
    */
-  trace(path: string, ...middleware: Array<Router.IMiddleware>);
+  trace(path: string, ...middleware: Array<Router.IMiddleware>): this;
   /**
    * HTTP CONNECT method
    */
-  connect(path: string, ...middleware: Array<Router.IMiddleware>);
+  connect(path: string, ...middleware: Array<Router.IMiddleware>): this;
   /**
    * Register route with all methods.
    */
-  all(path: string, ...middleware: Array<Router.IMiddleware>);
+  all(path: string, ...middleware: Array<Router.IMiddleware>): this;
   /**
    * Returns router middleware.
    */
