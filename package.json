@@ -36,11 +36,11 @@
   "devDependencies": {
     "beautify-benchmark": "^0.2.4",
     "benchmark": "^2.1.4",
-    "expect": "^22.0.3",
+    "expect": "^22.2.2",
     "find-my-way": "^1.8.2",
     "koa": "^2.4.1",
     "koa-router": "^7.3.0",
-    "mocha": "^4.1.0",
+    "mocha": "^5.0.0",
     "supertest": "^3.0.0"
   },
   "dependencies": {
