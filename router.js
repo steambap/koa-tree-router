@@ -11,6 +11,7 @@ const httpMethods = [
   "TRACE",
   "CONNECT"
 ];
+const NOT_FOUND = { handle: null, params: [] };
 
 function Router(opts = {}) {
   if (!(this instanceof Router)) {
@@ -93,7 +94,7 @@ Router.prototype.find = function(method, path) {
     return tree.search(path);
   }
 
-  return { handle: null, params: [] };
+  return NOT_FOUND;
 };
 
 Router.prototype.routes = Router.prototype.middleware = function() {

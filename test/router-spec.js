@@ -37,10 +37,47 @@ describe("Router", () => {
     expect(router.find("DELETE", "/").handle).toBeTruthy();
   });
 
+  it("support `head`", () => {
+    const router = new Router();
+    router.head("/", noOp);
+    expect(router.find("HEAD", "/").handle).toBeTruthy();
+  });
+
+  it("support `patch`", () => {
+    const router = new Router();
+    router.patch("/", noOp);
+    expect(router.find("PATCH", "/").handle).toBeTruthy();
+  });
+
+  it("support `options`", () => {
+    const router = new Router();
+    router.options("/", noOp);
+    expect(router.find("OPTIONS", "/").handle).toBeTruthy();
+  });
+
+  it("support `trace`", () => {
+    const router = new Router();
+    router.trace("/", noOp);
+    expect(router.find("TRACE", "/").handle).toBeTruthy();
+  });
+
+  it("support `connect`", () => {
+    const router = new Router();
+    router.connect("/", noOp);
+    expect(router.find("CONNECT", "/").handle).toBeTruthy();
+  });
+
   it("support wildcard `all`", () => {
     const router = new Router();
     router.all("/", noOp);
+    expect(router.find("DELETE", "/").handle).toBeTruthy();
     expect(router.find("GET", "/").handle).toBeTruthy();
+    expect(router.find("HEAD", "/").handle).toBeTruthy();
+    expect(router.find("PATCH", "/").handle).toBeTruthy();
     expect(router.find("POST", "/").handle).toBeTruthy();
+    expect(router.find("PUT", "/").handle).toBeTruthy();
+    expect(router.find("OPTIONS", "/").handle).toBeTruthy();
+    expect(router.find("TRACE", "/").handle).toBeTruthy();
+    expect(router.find("CONNECT", "/").handle).toBeTruthy();
   });
 });
