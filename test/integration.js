@@ -68,7 +68,7 @@ describe("Router", () => {
 
   it("support prefixing all routes", done => {
     const app = new Koa();
-    const router = new Router({ prefix: '/api' });
+    const router = new Router({ prefix: "/api" });
 
     router.get("/", function(ctx) {
       ctx.body = "ok";
