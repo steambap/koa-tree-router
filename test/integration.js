@@ -60,9 +60,31 @@ describe("Router", () => {
     request(app.callback())
       .post("/")
       .expect(405)
-      .end(function(_, res) {
+      .end(function(err, res) {
         expect(res.body).toMatchObject(resBody);
-        done();
+        done(err);
+      });
+  });
+
+  it("respond with 405 and correct header", done => {
+    const app = new Koa();
+    const router = new Router({
+      onMethodNotAllowed(ctx) {
+        ctx.body = {};
+      }
+    });
+
+    router.get("/users", function() {});
+    router.put("/users", function() {});
+
+    app.use(router.routes());
+
+    request(app.callback())
+      .post("/users")
+      .expect(405)
+      .end(function(err, res) {
+        expect(res.header).toHaveProperty("allow", "GET, PUT");
+        done(err);
       });
   });
 

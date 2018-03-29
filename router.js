@@ -105,6 +105,8 @@ Router.prototype.routes = Router.prototype.middleware = function() {
     if (!handle) {
       const handle405 = router.opts.onMethodNotAllowed;
       if (handle405) {
+        const allowList = [];
+        // Search for allowed methods
         for (let key in router.trees) {
           if (key === ctx.method) {
             continue;
@@ -112,11 +114,14 @@ Router.prototype.routes = Router.prototype.middleware = function() {
 
           const tree = router.trees[key];
           if (tree.search(ctx.path).handle !== null) {
-            ctx.status = 405;
-
-            return handle405(ctx, next);
+            allowList.push(key);
           }
         }
+
+        ctx.status = 405;
+        ctx.set("Allow", allowList.join(", "));
+
+        return handle405(ctx, next);
       }
 
       return next();
