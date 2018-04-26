@@ -88,7 +88,7 @@ describe("Router", () => {
       });
   });
 
-  it("support prefixing all routes", done => {
+  it("support prefixing all routes", () => {
     const app = new Koa();
     const router = new Router({ prefix: "/api" });
 
@@ -104,14 +104,14 @@ describe("Router", () => {
 
     const callback = app.callback();
 
-    request(callback)
-      .get("/api/")
-      .expect(200)
-      .end(() => {
-        request(callback)
-          .get("/api/cars")
-          .expect(200, done);
-      });
+    return Promise.all([
+      request(callback)
+        .get("/api/")
+        .expect(200),
+      request(callback)
+        .get("/api/cars")
+        .expect(200)
+    ]);
   });
 
   it("handle #", done => {
