@@ -5,7 +5,7 @@ const noOp = [function() {}];
 
 describe("Router", () => {
   it("works!", () => {
-    expect(Router()).toBeInstanceOf(Router);
+    expect(new Router()).toBeInstanceOf(Router);
   });
 
   it("throws with invalid input", () => {
