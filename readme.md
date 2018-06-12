@@ -12,7 +12,7 @@ Koa tree router is a high performance router for Koa.
 
 - Support for 405 method not allowed
 
-- Multiple middlewares per route
+- Multiple middleware per route
 
 ## How does it work?
 
@@ -59,7 +59,7 @@ router.on('GET', '/example', (ctx) => {
 ```
 
 #### Shorthand methods
-If you want tp get expressive, here is what you can do:
+If you want to get expressive, here is what you can do:
 ```js
 router.get(path, middleware)
 router.delete(path, middleware)
