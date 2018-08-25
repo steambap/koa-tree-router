@@ -1,16 +1,8 @@
+const http = require("http");
 const compose = require("koa-compose");
 const Node = require("./tree");
-const httpMethods = [
-  "DELETE",
-  "GET",
-  "HEAD",
-  "PATCH",
-  "POST",
-  "PUT",
-  "OPTIONS",
-  "TRACE",
-  "CONNECT"
-];
+
+const httpMethods = http.METHODS;
 const NOT_FOUND = { handle: null, params: [] };
 
 class Router {
