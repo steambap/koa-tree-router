@@ -6,11 +6,11 @@ Koa tree router is a high performance router for Koa.
 
 ## Features
 
-- Fast. Up to 12 times faster than Koa-router. [Benchmark](https://github.com/delvedor/router-benchmark)
+- Fast. Up to 11 times faster than Koa-router. [Benchmark](https://github.com/delvedor/router-benchmark)
 
-- Express routing using `router.get`, `router.put`, `router.post`, etc.
+- Express-style routing using `router.get`, `router.put`, `router.post`, etc.
 
-- Support for 405 method not allowed
+- Support for `405 method not allowed`
 
 - Multiple middleware per route
 
