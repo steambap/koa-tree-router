@@ -363,7 +363,7 @@ class node {
    */
   search(path) {
     let handle = null;
-    const params = [];
+    const params = {};
     let n = this;
 
     walk: while (true) {
@@ -397,7 +397,7 @@ class node {
               }
 
               // Save param value
-              params.push({ key: n.path.slice(1), value: path.slice(0, end) });
+              params[n.path.slice(1)] = path.slice(0, end);
 
               // We need to go deeper!
               if (end < path.length) {
@@ -416,7 +416,7 @@ class node {
               return { handle, params };
 
             case CATCH_ALL:
-              params.push({ key: n.path.slice(2), value: path });
+              params[n.path.slice(2)] = path;
 
               handle = n.handle;
               return { handle, params };

@@ -3,7 +3,7 @@ const compose = require("koa-compose");
 const Node = require("./tree");
 
 const httpMethods = http.METHODS;
-const NOT_FOUND = { handle: null, params: [] };
+const NOT_FOUND = { handle: null, params: {} };
 
 class Router {
   constructor(opts = {}) {
@@ -93,10 +93,7 @@ class Router {
         }
         return next();
       }
-      ctx.params = {};
-      params.forEach(({ key, value }) => {
-        ctx.params[key] = value;
-      });
+      ctx.params = params;
       return compose(handle)(ctx, next);
     };
     return handle;

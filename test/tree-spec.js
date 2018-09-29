@@ -132,57 +132,51 @@ describe("Wildcard", () => {
   const foundData = [
     {
       route: "/",
-      params: []
+      params: {}
     },
     {
       route: "/cmd/test/",
-      params: [{ key: "tool", value: "test" }]
+      params: { tool: "test" }
     },
     {
       route: "/cmd/test/3",
-      params: [{ key: "tool", value: "test" }, { key: "sub", value: "3" }]
+      params: { tool: "test", sub: "3" }
     },
     {
       route: "/src/",
-      params: [{ key: "filepath", value: "/" }]
+      params: { filepath: "/" }
     },
     {
       route: "/src/some/file.png",
-      params: [{ key: "filepath", value: "/some/file.png" }]
+      params: { filepath: "/some/file.png" }
     },
     {
       route: "/search/",
-      params: []
+      params: {}
     },
     {
       route: "/search/中文",
-      params: [{ key: "query", value: "中文" }]
+      params: { query: "中文" }
     },
     {
       route: "/user_noder",
-      params: [{ key: "name", value: "noder" }]
+      params: { name: "noder" }
     },
     {
       route: "/user_noder/about",
-      params: [{ key: "name", value: "noder" }]
+      params: { name: "noder" }
     },
     {
       route: "/files/js/inc/framework.js",
-      params: [
-        { key: "dir", value: "js" },
-        { key: "filepath", value: "/inc/framework.js" }
-      ]
+      params: { dir: "js", filepath: "/inc/framework.js" }
     },
     {
       route: "/info/gordon/public",
-      params: [{ key: "user", value: "gordon" }]
+      params: { user: "gordon" }
     },
     {
       route: "/info/gordon/project/node",
-      params: [
-        { key: "user", value: "gordon" },
-        { key: "project", value: "node" }
-      ]
+      params: { user: "gordon", project: "node" }
     }
   ];
 
@@ -197,11 +191,11 @@ describe("Wildcard", () => {
   const noHandlerData = [
     {
       route: "/cmd/test",
-      params: [{ key: "tool", value: "test" }]
+      params: { tool: "test" }
     },
     {
       route: "/search/中文/",
-      params: [{ key: "query", value: "中文" }]
+      params: { query: "中文" }
     }
   ];
 
