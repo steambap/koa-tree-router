@@ -69,6 +69,20 @@ class Router {
     }
     return NOT_FOUND;
   }
+  getAllowedMethods(path, exclude) {
+    const allowList = [];
+    // Search for allowed methods
+    for (let key in this.trees) {
+      if (key === exclude) {
+        continue;
+      }
+      const tree = this.trees[key];
+      if (tree.search(path).handle !== null) {
+        allowList.push(key);
+      }
+    }
+    return allowList;
+  }
   routes() {
     const router = this;
     const handle = function(ctx, next) {
@@ -76,19 +90,9 @@ class Router {
       if (!handle) {
         const handle405 = router.opts.onMethodNotAllowed;
         if (handle405) {
-          const allowList = [];
-          // Search for allowed methods
-          for (let key in router.trees) {
-            if (key === ctx.method) {
-              continue;
-            }
-            const tree = router.trees[key];
-            if (tree.search(ctx.path).handle !== null) {
-              allowList.push(key);
-            }
-          }
           ctx.status = 405;
-          ctx.set("Allow", allowList.join(", "));
+          const allow = router.getAllowedMethods(ctx.path, ctx.method);
+          ctx.set("Allow", allow.join(", "));
           return handle405(ctx, next);
         }
         return next();
