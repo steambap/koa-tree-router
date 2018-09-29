@@ -16,7 +16,7 @@ function countParams(path) {
   return n;
 }
 
-class node {
+class Node {
   /**
    *
    * @param {string} path
@@ -24,7 +24,7 @@ class node {
    * @param {number} type
    * @param {number} maxParams
    * @param {string} indices
-   * @param {node[]} children
+   * @param {Node[]} children
    * @param {function[]=} handle
    * @param {number} priority
    */
@@ -106,7 +106,7 @@ class node {
 
         // Split edge
         if (i < n.path.length) {
-          const child = new node(
+          const child = new Node(
             n.path.slice(i),
             n.wildChild,
             STATIC,
@@ -191,7 +191,7 @@ class node {
           // Otherwise insert it
           if (c !== ":" && c !== "*") {
             n.indices += c;
-            const child = new node(
+            const child = new Node(
               "",
               false,
               STATIC,
@@ -282,7 +282,7 @@ class node {
           offset = i;
         }
 
-        const child = new node("", false, PARAM, numParams);
+        const child = new Node("", false, PARAM, numParams);
         n.children = [child];
         n.wildChild = true;
         n = child;
@@ -292,7 +292,7 @@ class node {
           n.path = path.slice(offset, end);
           offset = end;
 
-          const staticChild = new node(
+          const staticChild = new Node(
             "",
             false,
             STATIC,
@@ -330,14 +330,14 @@ class node {
         n.path = path.slice(offset, i);
 
         // first node: catchAll node with empty path
-        const catchAllChild = new node("", true, CATCH_ALL, 1);
+        const catchAllChild = new Node("", true, CATCH_ALL, 1);
         n.children = [catchAllChild];
         n.indices = path[i];
         n = catchAllChild;
         n.priority++;
 
         // second node: node holding the variable
-        const child = new node(
+        const child = new Node(
           path.slice(i),
           false,
           CATCH_ALL,
@@ -434,4 +434,4 @@ class node {
   }
 }
 
-module.exports = node;
+module.exports = Node;
