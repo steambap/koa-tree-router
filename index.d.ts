@@ -18,7 +18,7 @@ declare namespace Router {
     /**
      * url params
      */
-    params: any;
+    params: { [key: string]: string };
   }
 }
 
