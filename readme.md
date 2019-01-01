@@ -131,6 +131,39 @@ Pattern: /src/*filepath
  /src/subdir/somefile.go   match
 ```
 
+## Matched patterns
+The `ctx.matched` is set with the request's matched pattern. This is useful for Access Control List (ACL) or any form of validations based on router's template.
+
+```JS
+const aclCheck = function(ctx, next) {
+  // the assumption is that the user's roles are set in context (e.g. ['reader', 'author'])
+  if (ctx.method === 'GET') {
+    if (['/posts', '/posts/:id'].indexOf(ctx.matched) !== -1 && ctx.user.roles.indexOf('reader') !== -1) {
+      // granted
+      return next();
+    }
+  } else if (ctx.method === 'POST') {
+    if (ctx.matched === '/posts' && ctx.user.roles.indexOf('author') !== -1) {
+      // granted
+      return next();
+    }
+  }
+  ctx.status = 403;
+  ctx.body = 'forbidden error';
+};
+
+router
+  .get("/posts", aclCheck, function(ctx) {
+    // your code
+  })
+  .post("/posts", aclCheck, function(ctx) {
+    // your code
+  })
+  .get("/posts/:id", aclCheck, function(ctx) {
+    // your code
+  });
+```
+
 ## License
 
 [MIT](LICENSE)

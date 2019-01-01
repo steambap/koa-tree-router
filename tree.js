@@ -363,6 +363,7 @@ class Node {
    */
   search(path) {
     let handle = null;
+    const matched = [];
     const params = [];
     let n = this;
 
@@ -377,16 +378,18 @@ class Node {
             const c = path.charCodeAt(0);
             for (let i = 0; i < n.indices.length; i++) {
               if (c === n.indices.charCodeAt(i)) {
+                matched.push(n.path);
                 n = n.children[i];
                 continue walk;
               }
             }
 
             // Nothing found.
-            return { handle, params };
+            return { handle, params, matched: null };
           }
 
           // Handle wildcard child
+          matched.push(n.path);
           n = n.children[0];
           switch (n.type) {
             case PARAM:
@@ -403,23 +406,26 @@ class Node {
               if (end < path.length) {
                 if (n.children.length > 0) {
                   path = path.slice(end);
+                  matched.push(n.path);
                   n = n.children[0];
                   continue walk;
                 }
 
                 // ... but we can't
-                return { handle, params };
+                return { handle, params, matched: null };
               }
 
               handle = n.handle;
+              matched.push(n.path);
 
-              return { handle, params };
+              return { handle, params, matched: matched.join('') };
 
             case CATCH_ALL:
               params.push({ key: n.path.slice(2), value: path });
 
               handle = n.handle;
-              return { handle, params };
+              matched.push(n.path);
+              return { handle, params, matched: matched.join('') };
 
             default:
               throw new Error("invalid node type");
@@ -427,9 +433,10 @@ class Node {
         }
       } else if (path === n.path) {
         handle = n.handle;
+        matched.push(n.path);
       }
 
-      return { handle, params };
+      return { handle, params, matched: matched.join('') };
     }
   }
 }

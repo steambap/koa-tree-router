@@ -3,7 +3,7 @@ const compose = require("koa-compose");
 const Node = require("./tree");
 
 const httpMethods = http.METHODS;
-const NOT_FOUND = { handle: null, params: [] };
+const NOT_FOUND = { handle: null, params: [], matched: null };
 
 class Router {
   constructor(opts = {}) {
@@ -72,7 +72,7 @@ class Router {
   routes() {
     const router = this;
     const handle = function(ctx, next) {
-      const { handle, params } = router.find(ctx.method, ctx.path);
+      const { handle, params, matched } = router.find(ctx.method, ctx.path);
       if (!handle) {
         const handle405 = router.opts.onMethodNotAllowed;
         if (handle405) {
@@ -94,6 +94,7 @@ class Router {
         return next();
       }
       ctx.params = {};
+      ctx.matched = matched;
       params.forEach(({ key, value }) => {
         ctx.params[key] = value;
       });
