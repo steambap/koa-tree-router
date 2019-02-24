@@ -3,9 +3,8 @@ const Tree = require("../tree");
 
 Tree.prototype.printTree = function(prefix = "") {
   console.log(
-    " %d:%d %s%s[%d] %s %s %d \r\n",
+    " %d %s%s[%d] %s %s %d \r\n",
     this.priority,
-    this.maxParams,
     prefix,
     this.path,
     this.children.length,

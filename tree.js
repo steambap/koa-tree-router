@@ -22,7 +22,6 @@ class Node {
    * @param {string} path
    * @param {boolean} wildChild
    * @param {number} type
-   * @param {number} maxParams
    * @param {string} indices
    * @param {Node[]} children
    * @param {function[]=} handle
@@ -32,7 +31,6 @@ class Node {
     path = "",
     wildChild = false,
     type = STATIC,
-    maxParams = 0,
     indices = "",
     children = [],
     handle = null,
@@ -41,7 +39,6 @@ class Node {
     this.path = path;
     this.wildChild = wildChild;
     this.type = type;
-    this.maxParams = maxParams;
     this.indices = indices;
     this.children = children;
     this.handle = handle;
@@ -90,11 +87,6 @@ class Node {
     // Non-empty tree
     if (n.path.length > 0 || n.children.length > 0) {
       walk: while (true) {
-        // Update maxParams of the current node
-        if (numParams > n.maxParams) {
-          n.maxParams = numParams;
-        }
-
         // Find the longest common prefix
         // This also implies that the common prefix contains no ':' or '*'
         // since the existing key can't contain those chars.
@@ -110,19 +102,11 @@ class Node {
             n.path.slice(i),
             n.wildChild,
             STATIC,
-            0,
             n.indices,
             n.children,
             n.handle,
             n.priority - 1
           );
-
-          // Update maxParams (max of all children)
-          child.children.forEach(grandChild => {
-            if (grandChild.maxParams > child.maxParams) {
-              child.maxParams = grandChild.maxParams;
-            }
-          });
 
           n.children = [child];
           n.indices = n.path[i];
@@ -139,10 +123,6 @@ class Node {
             n = n.children[0];
             n.priority++;
 
-            // Update maxParams of the child node
-            if (numParams > n.maxParams) {
-              n.maxParams = numParams;
-            }
             numParams--;
 
             // Check if the wildcard matches
@@ -194,8 +174,7 @@ class Node {
             const child = new Node(
               "",
               false,
-              STATIC,
-              numParams
+              STATIC
             );
             n.children.push(child);
             n.addPriority(n.indices.length - 1);
@@ -282,7 +261,7 @@ class Node {
           offset = i;
         }
 
-        const child = new Node("", false, PARAM, numParams);
+        const child = new node("", false, PARAM);
         n.children = [child];
         n.wildChild = true;
         n = child;
@@ -296,7 +275,6 @@ class Node {
             "",
             false,
             STATIC,
-            numParams,
             "",
             [],
             null,
@@ -330,7 +308,7 @@ class Node {
         n.path = path.slice(offset, i);
 
         // first node: catchAll node with empty path
-        const catchAllChild = new Node("", true, CATCH_ALL, 1);
+        const catchAllChild = new node("", true, CATCH_ALL);
         n.children = [catchAllChild];
         n.indices = path[i];
         n = catchAllChild;
@@ -341,7 +319,6 @@ class Node {
           path.slice(i),
           false,
           CATCH_ALL,
-          1,
           "",
           [],
           handle,
