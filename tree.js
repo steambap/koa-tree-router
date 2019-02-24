@@ -261,7 +261,7 @@ class Node {
           offset = i;
         }
 
-        const child = new node("", false, PARAM);
+        const child = new Node("", false, PARAM);
         n.children = [child];
         n.wildChild = true;
         n = child;
@@ -308,7 +308,7 @@ class Node {
         n.path = path.slice(offset, i);
 
         // first node: catchAll node with empty path
-        const catchAllChild = new node("", true, CATCH_ALL);
+        const catchAllChild = new Node("", true, CATCH_ALL);
         n.children = [catchAllChild];
         n.indices = path[i];
         n = catchAllChild;
