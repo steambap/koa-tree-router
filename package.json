@@ -1,6 +1,6 @@
 {
   "name": "koa-tree-router",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "A high performance koa router",
   "main": "router.js",
   "scripts": {
@@ -33,10 +33,10 @@
   "homepage": "https://github.com/steambap/koa-tree-router#readme",
   "typings": "index.d.ts",
   "devDependencies": {
-    "expect": "^23.6.0",
-    "koa": "^2.6.2",
-    "mocha": "^5.2.0",
-    "supertest": "^3.3.0"
+    "expect": "^24.1.0",
+    "koa": "^2.7.0",
+    "mocha": "^6.0.1",
+    "supertest": "^3.4.2"
   },
   "dependencies": {
     "koa-compose": "^4.1.0"
