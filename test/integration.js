@@ -106,7 +106,7 @@ describe("Router", () => {
 
     return Promise.all([
       request(callback)
-        .get("/api/")
+        .get("/api")
         .expect(200),
       request(callback)
         .get("/api/cars")

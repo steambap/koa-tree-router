@@ -25,6 +25,9 @@ class Router {
     }
     if (this.opts.prefix) {
       path = this.opts.prefix + path;
+      if (path[path.length - 1] === '/') {
+        path = path.slice(0, path.length - 1);
+      }
     }
     this.trees[method].addRoute(path, handle);
     return this;
