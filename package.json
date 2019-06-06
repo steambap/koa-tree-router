@@ -33,9 +33,9 @@
   "homepage": "https://github.com/steambap/koa-tree-router#readme",
   "typings": "index.d.ts",
   "devDependencies": {
-    "expect": "^24.1.0",
+    "expect": "^24.8.0",
     "koa": "^2.7.0",
-    "mocha": "^6.0.1",
+    "mocha": "^6.1.4",
     "supertest": "^3.4.2"
   },
   "dependencies": {
