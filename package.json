@@ -1,6 +1,6 @@
 {
   "name": "koa-tree-router",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "A high performance koa router",
   "main": "router.js",
   "scripts": {
