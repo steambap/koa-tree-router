@@ -39,7 +39,7 @@
     "supertest": "^3.4.2"
   },
   "dependencies": {
-    "@types/koa": "^2.0.48",
+    "@types/koa": "^2.0.49",
     "koa-compose": "^4.1.0"
   }
 }
