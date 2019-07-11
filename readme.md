@@ -84,6 +84,22 @@ Returns router middleware.
 app.use(router.routes());
 ```
 
+#### mount
+Returns a koa middleware. Use this to mount multiple router or prefix your router.
+```JS
+app.use(router1.mount("/user"));
+app.use(router2.mount("/comment"));
+```
+
+This module works nicely with [koa-mount](https://github.com/koajs/mount), and the above code is the same as:
+
+```JS
+const mount = require('koa-mount');
+// ... other codes
+app.use(mount("/user", router1.routes()));
+app.use(mount("/comment", router2.routes()));
+```
+
 #### ctx.params
 This object contains key-value pairs of named route parameters.
 
