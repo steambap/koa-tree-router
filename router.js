@@ -98,6 +98,63 @@ class Router {
   middleware() {
     return this.routes();
   }
+  /**
+   * @param {String} prefix
+   */
+  mount(prefix) {
+    if (prefix[0] !== "/") {
+      throw new Error("path must begin with '/' in path");
+    }
+    const downstream = this.routes();
+
+    // don't need to do mounting here
+    if (prefix === "/") return downstream;
+
+    const trailingSlash = prefix.slice(-1) === "/";
+
+    return async function(ctx, upstream) {
+      const prev = ctx.path;
+      const newPath = match(prev);
+      if (!newPath) return upstream();
+
+      ctx.mountPath = prefix;
+      ctx.path = newPath;
+
+      await downstream(ctx, async () => {
+        ctx.path = prev;
+        await upstream();
+        ctx.path = newPath;
+      });
+
+      ctx.path = prev;
+    };
+
+    /**
+     * Check if `prefix` satisfies a `path`.
+     * Returns the new path.
+     *
+     * match('/images/', '/lkajsldkjf') => false
+     * match('/images', '/images') => /
+     * match('/images/', '/images') => false
+     * match('/images/', '/images/asdf') => /asdf
+     *
+     * @param {String} prefix
+     * @param {String} path
+     * @return {String|Boolean}
+     * @api private
+     */
+    function match(path) {
+      // does not match prefix at all
+      if (path.indexOf(prefix) !== 0) return false;
+
+      const newPath = path.replace(prefix, "") || "/";
+      if (trailingSlash) return newPath;
+
+      // `/mount` does not match `/mountlkjalskjdf`
+      if (newPath[0] !== "/") return false;
+      return newPath;
+    }
+  }
 }
 
 module.exports = Router;
