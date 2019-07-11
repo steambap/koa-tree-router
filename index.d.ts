@@ -115,6 +115,10 @@ declare class Router<StateT = any, CustomT = {}> {
    * Returns router middleware.
    */
   routes(): Router.Middleware<StateT, CustomT>;
+  /**
+   * Mount the router with specific path in a koa app
+   */
+  mount(path: string): Koa.Middleware;
 }
 
 export = Router;

@@ -116,3 +116,28 @@ describe("Router", () => {
       .expect(200, done);
   });
 });
+
+describe("Mount multiple routes", () => {
+  const app = new Koa();
+  const router1 = new Router();
+  router1.get("/", function(ctx) {
+    ctx.body = "ok";
+  });
+  app.use(router1.mount("/examples"));
+
+  const router2 = new Router();
+  router2.get("/:file", function(ctx) {
+    ctx.body = "ok";
+  });
+  app.use(router2.mount("/test"));
+
+  it("should handle /examples", () =>
+    request(app.callback())
+      .get("/examples")
+      .expect(200));
+
+  it("should handle /test", () =>
+    request(app.callback())
+      .get("/test/errors.js")
+      .expect(200));
+});
