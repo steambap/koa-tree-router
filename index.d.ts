@@ -3,7 +3,6 @@ import * as Koa from "koa";
 declare namespace Router {
   export interface IRouterOptions<StateT = any, CustomT = {}> {
     onMethodNotAllowed?: Router.Middleware<StateT, CustomT>;
-    prefix?: string;
   }
   export interface IRouterParamContext<StateT = any, CustomT = {}> {
     /**

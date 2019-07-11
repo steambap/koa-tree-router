@@ -10,9 +10,6 @@ class Router {
     if (!(this instanceof Router)) {
       return new Router(opts);
     }
-    if (opts.prefix && opts.prefix[0] !== "/") {
-      throw new Error("prefix must begin with '/' in path");
-    }
     this.trees = {};
     this.opts = opts;
   }
@@ -22,12 +19,6 @@ class Router {
     }
     if (!this.trees[method]) {
       this.trees[method] = new Node();
-    }
-    if (this.opts.prefix) {
-      path = this.opts.prefix + path;
-      if (path[path.length - 1] === '/') {
-        path = path.slice(0, path.length - 1);
-      }
     }
     this.trees[method].addRoute(path, handle);
     return this;
