@@ -65,7 +65,7 @@ class Router {
   }
   routes() {
     const router = this;
-    const handle = function(ctx, next) {
+    const handle = function (ctx, next) {
       const { handle, params } = router.find(ctx.method, ctx.path);
       if (!handle) {
         const handle405 = router.opts.onMethodNotAllowed;
@@ -89,7 +89,7 @@ class Router {
       }
       ctx.params = {};
       params.forEach(({ key, value }) => {
-        ctx.params[key] = value;
+        ctx.params[decodeURIComponent(key)] = decodeURIComponent(value);
       });
       return compose(handle)(ctx, next);
     };
@@ -112,7 +112,7 @@ class Router {
 
     const trailingSlash = prefix.slice(-1) === "/";
 
-    return async function(ctx, upstream) {
+    return async function (ctx, upstream) {
       const prev = ctx.path;
       const newPath = match(prev);
       if (!newPath) return upstream();
