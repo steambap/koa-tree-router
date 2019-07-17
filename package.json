@@ -36,7 +36,7 @@
     "expect": "^24.8.0",
     "koa": "^2.7.0",
     "mocha": "^6.1.4",
-    "supertest": "^3.4.2"
+    "supertest": "^4.0.2"
   },
   "dependencies": {
     "@types/koa": "^2.0.49",
