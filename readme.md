@@ -1,6 +1,8 @@
 # Koa tree router
 
 [![Build Status](https://travis-ci.org/steambap/koa-tree-router.svg?branch=master)](https://travis-ci.org/steambap/koa-tree-router)
+[![npm](https://img.shields.io/npm/v/koa-tree-router.svg)](https://npm.im/koa-tree-router)
+![npm downloads](https://img.shields.io/npm/dt/koa-tree-router.svg)
 
 Koa tree router is a high performance router for Koa.
 
@@ -19,6 +21,15 @@ Koa tree router is a high performance router for Koa.
 The router relies on a tree structure which makes heavy use of *common prefixes*, it is basically a *compact* [*prefix tree*](https://en.wikipedia.org/wiki/Trie) (or just [*Radix tree*](https://en.wikipedia.org/wiki/Radix_tree)).
 
 This module's tree implementation is based on [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter).
+
+## Installation
+
+```sh
+# npm
+npm i koa-tree-router
+# yarn
+yarn add koa-tree-router
+```
 
 ## Usage
 
