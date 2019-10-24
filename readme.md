@@ -1,6 +1,6 @@
 # Koa tree router
 
-[![Build Status](https://travis-ci.org/steambap/koa-tree-router.svg?branch=master)](https://travis-ci.org/steambap/koa-tree-router)
+[![Build Status](https://github.com/steambap/koa-tree-router/workflows/CI/badge.svg)](https://github.com/steambap/koa-tree-router/actions?workflow=CI)
 [![npm](https://img.shields.io/npm/v/koa-tree-router.svg)](https://npm.im/koa-tree-router)
 ![npm downloads](https://img.shields.io/npm/dt/koa-tree-router.svg)
 
