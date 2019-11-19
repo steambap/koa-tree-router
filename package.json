@@ -34,12 +34,12 @@
   "typings": "index.d.ts",
   "devDependencies": {
     "expect": "^24.8.0",
-    "koa": "^2.7.0",
-    "mocha": "^6.1.4",
+    "koa": "^2.11.0",
+    "mocha": "^6.2.2",
     "supertest": "^4.0.2"
   },
   "dependencies": {
-    "@types/koa": "^2.0.49",
+    "@types/koa": "^2.0.52",
     "koa-compose": "^4.1.0"
   }
 }
