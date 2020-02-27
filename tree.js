@@ -238,7 +238,7 @@ class Node {
         );
       }
 
-      // check if the wildcard has a name
+      // Check if the wildcard has a name
       if (end - i < 2) {
         throw new Error(
           "wildcards must be named with a non-empty name in path '" +
@@ -292,14 +292,14 @@ class Node {
 
         n.path = path.slice(offset, i);
 
-        // first node: catchAll node with empty path
+        // First node: catchAll node with empty path
         const catchAllChild = new Node("", true, CATCH_ALL);
         n.children = [catchAllChild];
         n.indices = path[i];
         n = catchAllChild;
         n.priority++;
 
-        // second node: node holding the variable
+        // Second node: node holding the variable
         const child = new Node(
           path.slice(i),
           false,
@@ -315,7 +315,7 @@ class Node {
       }
     }
 
-    // insert remaining path part and handle to the leaf
+    // Insert remaining path part and handle to the leaf
     n.path = path.slice(offset);
     n.handle = handle;
   }
