@@ -135,10 +135,8 @@ class Node {
               continue walk;
             } else {
               // Wildcard conflict
-              let pathSeg = "";
-              if (n.type === CATCH_ALL) {
-                pathSeg = path;
-              } else {
+              let pathSeg = path;
+              if (n.type !== CATCH_ALL) {
                 pathSeg = path.split("/")[0];
               }
               const prefix =
