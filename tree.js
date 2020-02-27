@@ -129,6 +129,8 @@ class Node {
             if (
               path.length >= n.path.length &&
               n.path === path.slice(0, n.path.length) &&
+              // Adding a child to a catchAll is not possible
+              n.type !== CATCH_ALL &&
               (n.path.length >= path.length || path[n.path.length] === "/")
             ) {
               continue walk;

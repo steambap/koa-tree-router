@@ -223,4 +223,11 @@ describe("Invalid", () => {
 
     expect(() => tree.search("/test")).toThrow();
   });
+
+  it("conflict", () => {
+    const tree = new Tree();
+    tree.addRoute("/src3/*filepath", noOp);
+
+    expect(() => tree.addRoute("/src3/*filepath/x", noOp)).toThrow();
+  })
 });
