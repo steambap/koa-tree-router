@@ -15,6 +15,20 @@ function countParams(path) {
   return n;
 }
 
+/**
+ * @param {string} a
+ * @param {string} b
+ */
+function longestCommonPrefix(a, b) {
+  let i = 0;
+  const max = Math.min(a.length, b.length);
+  while (i < max && a[i] === b[i]) {
+    i++;
+  }
+
+  return i;
+}
+
 class Node {
   /**
    *
@@ -83,113 +97,108 @@ class Node {
     n.priority++;
     let numParams = countParams(path);
 
-    // Non-empty tree
-    if (n.path.length > 0 || n.children.length > 0) {
-      walk: while (true) {
-        // Find the longest common prefix
-        // This also implies that the common prefix contains no ':' or '*'
-        // since the existing key can't contain those chars.
-        let i = 0;
-        const max = Math.min(path.length, n.path.length);
-        while (i < max && path[i] === n.path[i]) {
-          i++;
-        }
-
-        // Split edge
-        if (i < n.path.length) {
-          const child = new Node(
-            n.path.slice(i),
-            n.wildChild,
-            STATIC,
-            n.indices,
-            n.children,
-            n.handle,
-            n.priority - 1
-          );
-
-          n.children = [child];
-          n.indices = n.path[i];
-          n.path = path.slice(0, i);
-          n.handle = null;
-          n.wildChild = false;
-        }
-
-        // Make new node a child of this node
-        if (i < path.length) {
-          path = path.slice(i);
-
-          if (n.wildChild) {
-            n = n.children[0];
-            n.priority++;
-
-            numParams--;
-
-            // Check if the wildcard matches
-            if (
-              path.length >= n.path.length &&
-              n.path === path.slice(0, n.path.length) &&
-              // Adding a child to a catchAll is not possible
-              n.type !== CATCH_ALL &&
-              (n.path.length >= path.length || path[n.path.length] === "/")
-            ) {
-              continue walk;
-            } else {
-              // Wildcard conflict
-              let pathSeg = path;
-              if (n.type !== CATCH_ALL) {
-                pathSeg = path.split("/")[0];
-              }
-              const prefix =
-                fullPath.slice(0, fullPath.indexOf(pathSeg)) + n.path;
-              throw new Error(
-                `'${pathSeg}' in new path '${fullPath}' conflicts with existing wildcard '${n.path}' in existing prefix '${prefix}'`
-              );
-            }
-          }
-
-          const c = path[0];
-
-          // Slash after param
-          if (n.type === PARAM && c === "/" && n.children.length === 1) {
-            n = n.children[0];
-            n.priority++;
-            continue walk;
-          }
-
-          // Check if a child with the next path char exists
-          for (let j = 0; j < n.indices.length; j++) {
-            if (c === n.indices[j]) {
-              j = n.addPriority(j);
-              n = n.children[j];
-              continue walk;
-            }
-          }
-
-          // Otherwise insert it
-          if (c !== ":" && c !== "*") {
-            n.indices += c;
-            const child = new Node("", false, STATIC);
-            n.children.push(child);
-            n.addPriority(n.indices.length - 1);
-            n = child;
-          }
-          n.insertChild(numParams, path, fullPath, handle);
-          return;
-        } else if (i === path.length) {
-          // Make node a (in-path leaf)
-          if (n.handle !== null) {
-            throw new Error(
-              "A handle is already registered for path '" + fullPath + "'"
-            );
-          }
-          n.handle = handle;
-        }
-        return;
-      }
-    } else {
-      // Empty tree
+    if (n.path.length === 0 && n.children.length === 0) {
       n.insertChild(numParams, path, fullPath, handle);
       n.type = ROOT;
+      return;
+    }
+
+    walk: while (true) {
+      // Find the longest common prefix
+      // This also implies that the common prefix contains no ':' or '*'
+      // since the existing key can't contain those chars.
+      let i = longestCommonPrefix(path, n.path);
+
+      // Split edge
+      if (i < n.path.length) {
+        const child = new Node(
+          n.path.slice(i),
+          n.wildChild,
+          STATIC,
+          n.indices,
+          n.children,
+          n.handle,
+          n.priority - 1
+        );
+
+        n.children = [child];
+        n.indices = n.path[i];
+        n.path = path.slice(0, i);
+        n.handle = null;
+        n.wildChild = false;
+      }
+
+      // Make new node a child of this node
+      if (i < path.length) {
+        path = path.slice(i);
+
+        if (n.wildChild) {
+          n = n.children[0];
+          n.priority++;
+
+          numParams--;
+
+          // Check if the wildcard matches
+          if (
+            path.length >= n.path.length &&
+            n.path === path.slice(0, n.path.length) &&
+            // Adding a child to a catchAll is not possible
+            n.type !== CATCH_ALL &&
+            (n.path.length >= path.length || path[n.path.length] === "/")
+          ) {
+            continue walk;
+          } else {
+            // Wildcard conflict
+            let pathSeg = path;
+            if (n.type !== CATCH_ALL) {
+              pathSeg = path.split("/")[0];
+            }
+            const prefix =
+              fullPath.slice(0, fullPath.indexOf(pathSeg)) + n.path;
+            throw new Error(
+              `'${pathSeg}' in new path '${fullPath}' conflicts with existing wildcard '${n.path}' in existing prefix '${prefix}'`
+            );
+          }
+        }
+
+        const c = path[0];
+
+        // Slash after param
+        if (n.type === PARAM && c === "/" && n.children.length === 1) {
+          n = n.children[0];
+          n.priority++;
+          continue walk;
+        }
+
+        // Check if a child with the next path char exists
+        for (let j = 0; j < n.indices.length; j++) {
+          if (c === n.indices[j]) {
+            j = n.addPriority(j);
+            n = n.children[j];
+            continue walk;
+          }
+        }
+
+        // Otherwise insert it
+        if (c !== ":" && c !== "*") {
+          n.indices += c;
+          const child = new Node("", false, STATIC);
+          n.children.push(child);
+          n.addPriority(n.indices.length - 1);
+          n = child;
+        }
+        n.insertChild(numParams, path, fullPath, handle);
+        return;
+      } else if (i === path.length) {
+        // Make node a (in-path leaf)
+        if (n.handle !== null) {
+          throw new Error(
+            "A handle is already registered for path '" + fullPath + "'"
+          );
+        }
+        n.handle = handle;
+      }
+      return;
     }
   }
   /**
