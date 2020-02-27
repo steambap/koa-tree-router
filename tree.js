@@ -7,10 +7,9 @@ const CATCH_ALL = 3;
 function countParams(path) {
   let n = 0;
   for (let i = 0; i < path.length; i++) {
-    if (path[i] !== ":" && path[i] !== "*") {
-      continue;
+    if (path[i] === ":" || path[i] === "*") {
+      n++;
     }
-    n++;
   }
 
   return n;
@@ -145,9 +144,7 @@ class Node {
               const prefix =
                 fullPath.slice(0, fullPath.indexOf(pathSeg)) + n.path;
               throw new Error(
-                `'${pathSeg}' in new path '${fullPath}' conflicts with existing wildcard '${
-                  n.path
-                }' in existing prefix '${prefix}'`
+                `'${pathSeg}' in new path '${fullPath}' conflicts with existing wildcard '${n.path}' in existing prefix '${prefix}'`
               );
             }
           }
@@ -173,11 +170,7 @@ class Node {
           // Otherwise insert it
           if (c !== ":" && c !== "*") {
             n.indices += c;
-            const child = new Node(
-              "",
-              false,
-              STATIC
-            );
+            const child = new Node("", false, STATIC);
             n.children.push(child);
             n.addPriority(n.indices.length - 1);
             n = child;
@@ -273,15 +266,7 @@ class Node {
           n.path = path.slice(offset, end);
           offset = end;
 
-          const staticChild = new Node(
-            "",
-            false,
-            STATIC,
-            "",
-            [],
-            null,
-            1
-          );
+          const staticChild = new Node("", false, STATIC, "", [], null, 1);
           n.children = [staticChild];
           n = staticChild;
         }
