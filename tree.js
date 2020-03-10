@@ -16,6 +16,48 @@ function countParams(path) {
 }
 
 /**
+ * Search for a wildcard segment and check the name for invalid characters.
+ * Returns -1 as index, if no wildcard was found
+ * @param {string} path
+ */
+function findWildcard(path) {
+  for (let i = 0; i < path.length; i++) {
+    const c = path[i];
+    if (c !== ":" && c !== "*") {
+      continue;
+    }
+
+    let valid = true;
+    const remaining = path.slice(i + 1);
+    for (let end = 0; end < remaining.length; end++) {
+      const char = remaining[end];
+      if (char === "/") {
+        return {
+          wildcard: path.slice(i, i + 1 + end),
+          i,
+          valid
+        };
+      }
+      if (char === ":" || char === "*") {
+        valid = false;
+      }
+    }
+
+    return {
+      wildcard: path.slice(i),
+      i,
+      valid
+    };
+  }
+
+  return {
+    wildcard: "",
+    i: -1,
+    valid: false
+  };
+}
+
+/**
  * @param {string} a
  * @param {string} b
  */
@@ -95,10 +137,9 @@ class Node {
     let n = this;
     let fullPath = path;
     n.priority++;
-    let numParams = countParams(path);
 
     if (n.path.length === 0 && n.children.length === 0) {
-      n.insertChild(numParams, path, fullPath, handle);
+      n.insertChild(path, fullPath, handle);
       n.type = ROOT;
       return;
     }
@@ -135,8 +176,6 @@ class Node {
         if (n.wildChild) {
           n = n.children[0];
           n.priority++;
-
-          numParams--;
 
           // Check if the wildcard matches
           if (
@@ -187,68 +226,46 @@ class Node {
           n.addPriority(n.indices.length - 1);
           n = child;
         }
-        n.insertChild(numParams, path, fullPath, handle);
+        n.insertChild(path, fullPath, handle);
         return;
-      } else if (i === path.length) {
-        // Make node a (in-path leaf)
-        if (n.handle !== null) {
-          throw new Error(
-            "A handle is already registered for path '" + fullPath + "'"
-          );
-        }
-        n.handle = handle;
       }
+
+      if (n.handle !== null) {
+        throw new Error(
+          "A handle is already registered for path '" + fullPath + "'"
+        );
+      }
+      n.handle = handle;
       return;
     }
   }
   /**
    *
-   * @param {number} numParams
    * @param {string} path
    * @param {string} fullPath
    * @param {function[]} handle
    */
-  insertChild(numParams, path, fullPath, handle) {
+  insertChild(path, fullPath, handle) {
     let n = this;
-    let offset = 0; // Already handled chars of the path
 
-    // Find prefix until first wildcard
-    for (let i = 0, max = path.length; numParams > 0; i++) {
-      const c = path[i];
-      if (c !== ":" && c !== "*") {
-        continue;
+    while (true) {
+      // Find prefix until first wildcard
+      let { wildcard, i, valid } = findWildcard(path);
+      if (i < 0) {
+        break;
       }
 
-      // Find wildcard end (either '/' or path end)
-      let end = i + 1;
-      while (end < max && path[end] !== "/") {
-        if (path[end] === ":" || path[end] === "*") {
-          throw new Error(
-            "only one wildcard per path segment is allowed, has: '" +
-              path.slice(i) +
-              "' in path '" +
-              fullPath +
-              "'"
-          );
-        } else {
-          end++;
-        }
-      }
-
-      // Check if this Node existing children which would be unreachable
-      // if we insert the wildcard here
-      if (n.children.length > 0) {
+      if (!valid) {
         throw new Error(
-          "wildcard route '" +
-            path.slice(i, end) +
-            "' conflicts with existing children in path '" +
+          "only one wildcard per path segment is allowed, has: '" +
+            wildcard +
+            "' in path '" +
             fullPath +
             "'"
         );
       }
 
-      // Check if the wildcard has a name
-      if (end - i < 2) {
+      if (wildcard.length < 2) {
         throw new Error(
           "wildcards must be named with a non-empty name in path '" +
             fullPath +
@@ -256,29 +273,45 @@ class Node {
         );
       }
 
-      if (c === ":") {
-        // Split path at the beginning of the wildcard
+      if (n.children.length > 0) {
+        throw new Error(
+          "wildcard route '" +
+            wildcard +
+            "' conflicts with existing children in path '" +
+            fullPath +
+            "'"
+        );
+      }
+
+      if (wildcard[0] === ":") {
+        // param
         if (i > 0) {
-          n.path = path.slice(offset, i);
-          offset = i;
+          // Insert prefix before the current wildcard
+          n.path = path.slice(0, i);
+          path = path.slice(i);
         }
 
-        const child = new Node("", false, PARAM);
-        n.children = [child];
         n.wildChild = true;
+        const child = new Node(wildcard, false, PARAM);
+        n.children = [child];
         n = child;
         n.priority++;
-        numParams--;
-        if (end < max) {
-          n.path = path.slice(offset, end);
-          offset = end;
+
+        if (wildcard.length < path.length) {
+          path = path.slice(wildcard.length);
 
           const staticChild = new Node("", false, STATIC, "", [], null, 1);
           n.children = [staticChild];
           n = staticChild;
+          continue;
         }
+
+        // Otherwise we're done. Insert the handle in the new leaf
+        n.handle = handle;
+        return;
       } else {
-        if (end !== max || numParams > 1) {
+        // catchAll
+        if (i + wildcard.length != path.length) {
           throw new Error(
             "catch-all routes are only allowed at the end of the path in path '" +
               fullPath +
@@ -294,17 +327,18 @@ class Node {
           );
         }
 
+        // Currently fixed width 1 for '/
         i--;
         if (path[i] !== "/") {
           throw new Error("no / before catch-all in path '" + fullPath + "'");
         }
 
-        n.path = path.slice(offset, i);
+        n.path = path.slice(0, i);
 
         // First node: catchAll node with empty path
         const catchAllChild = new Node("", true, CATCH_ALL);
         n.children = [catchAllChild];
-        n.indices = path[i];
+        n.indices = "/";
         n = catchAllChild;
         n.priority++;
 
@@ -325,7 +359,7 @@ class Node {
     }
 
     // Insert remaining path part and handle to the leaf
-    n.path = path.slice(offset);
+    n.path = path;
     n.handle = handle;
   }
   /**
