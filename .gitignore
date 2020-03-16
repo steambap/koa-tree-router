@@ -57,3 +57,5 @@ typings/
 # dotenv environment variables file
 .env
 
+# Only apps need lock file
+yarn.lock
