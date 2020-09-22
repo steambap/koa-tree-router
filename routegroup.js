@@ -26,6 +26,9 @@ class RouteGroup {
     if (path[0] !== "/") {
       throw new Error("path must start with a '/'");
     }
+    if (path === "/") {
+      return this.p;
+    }
     return this.p + path;
   }
   /**
@@ -70,6 +73,9 @@ class RouteGroup {
       this.on(method, ...arg);
     });
     return this;
+  }
+  routes() {
+    return this.r.routes();
   }
 }
 

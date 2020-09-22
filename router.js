@@ -1,6 +1,7 @@
 const http = require("http");
 const compose = require("koa-compose");
 const Node = require("./tree");
+const RouteGroup = require("./routegroup");
 
 const httpMethods = http.METHODS;
 const NOT_FOUND = { handle: null, params: [] };
@@ -51,7 +52,7 @@ class Router {
     return this.on("CONNECT", ...arg);
   }
   all(...arg) {
-    httpMethods.forEach(method => {
+    httpMethods.forEach((method) => {
       this.on(method, ...arg);
     });
     return this;
@@ -65,7 +66,7 @@ class Router {
   }
   routes() {
     const router = this;
-    const handle = function(ctx, next) {
+    const handle = function (ctx, next) {
       const { handle, params } = router.find(ctx.method, ctx.path);
       if (!handle) {
         const handle405 = router.opts.onMethodNotAllowed;
@@ -99,6 +100,7 @@ class Router {
     return this.routes();
   }
   /**
+   * todo remove
    * @param {String} prefix
    */
   mount(prefix) {
@@ -112,7 +114,7 @@ class Router {
 
     const trailingSlash = prefix.slice(-1) === "/";
 
-    return async function(ctx, upstream) {
+    return async function (ctx, upstream) {
       const prev = ctx.path;
       const newPath = match(prev);
       if (!newPath) return upstream();
@@ -154,6 +156,12 @@ class Router {
       if (newPath[0] !== "/") return false;
       return newPath;
     }
+  }
+  /**
+   * @param {string} path
+   */
+  newGroup(path) {
+    return new RouteGroup(this, path);
   }
 }
 

@@ -95,6 +95,26 @@ Returns router middleware.
 app.use(router.routes());
 ```
 
+#### nested routes
+A way to create groups of routes without incuring any per-request overhead.
+
+```JS
+const Koa = require("koa");
+const Router = require("koa-tree-router");
+
+const app = new Koa();
+const router = new Router();
+const group = router.newGroup("/foo");
+// add a handler for /foo/bar
+group.get("/bar", function(ctx) {
+  ctx.body = "hello, world";
+});
+
+app.use(router.routes());
+
+app.listen(8080);
+```
+
 #### ctx.params
 This object contains key-value pairs of named route parameters.
 
