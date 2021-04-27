@@ -116,10 +116,6 @@ declare class Router<StateT = any, CustomT = {}> {
    */
   routes(): Router.Middleware<StateT, CustomT>;
   /**
-   * Mount the router with specific path in a koa app
-   */
-  mount(path: string): Koa.Middleware;
-  /**
    * Create groups of routes
    */
   newGroup(path: string): RouteGroup<StateT, CustomT>;
