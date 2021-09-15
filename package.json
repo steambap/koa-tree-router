@@ -11,7 +11,7 @@
     "url": "git+https://github.com/steambap/koa-tree-router.git"
   },
   "engines": {
-    "node": ">=7.6"
+    "node": ">=10.0"
   },
   "files": [
     "*.js",
@@ -33,9 +33,9 @@
   "homepage": "https://github.com/steambap/koa-tree-router#readme",
   "typings": "index.d.ts",
   "devDependencies": {
-    "expect": "^26.6.2",
+    "expect": "^27.2.0",
     "koa": "^2.13.0",
-    "mocha": "^8.2.1",
+    "mocha": "^9.1.1",
     "supertest": "^4.0.2"
   },
   "dependencies": {
