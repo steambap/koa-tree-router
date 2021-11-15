@@ -3,18 +3,6 @@ const ROOT = 1;
 const PARAM = 2;
 const CATCH_ALL = 3;
 
-/** @param {string} path */
-function countParams(path) {
-  let n = 0;
-  for (let i = 0; i < path.length; i++) {
-    if (path[i] === ":" || path[i] === "*") {
-      n++;
-    }
-  }
-
-  return n;
-}
-
 /**
  * Search for a wildcard segment and check the name for invalid characters.
  * Returns -1 as index, if no wildcard was found
@@ -258,28 +246,28 @@ class Node {
       if (!valid) {
         throw new Error(
           "only one wildcard per path segment is allowed, has: '" +
-            wildcard +
-            "' in path '" +
-            fullPath +
-            "'"
+          wildcard +
+          "' in path '" +
+          fullPath +
+          "'"
         );
       }
 
       if (wildcard.length < 2) {
         throw new Error(
           "wildcards must be named with a non-empty name in path '" +
-            fullPath +
-            "'"
+          fullPath +
+          "'"
         );
       }
 
       if (n.children.length > 0) {
         throw new Error(
           "wildcard route '" +
-            wildcard +
-            "' conflicts with existing children in path '" +
-            fullPath +
-            "'"
+          wildcard +
+          "' conflicts with existing children in path '" +
+          fullPath +
+          "'"
         );
       }
 
@@ -314,16 +302,16 @@ class Node {
         if (i + wildcard.length != path.length) {
           throw new Error(
             "catch-all routes are only allowed at the end of the path in path '" +
-              fullPath +
-              "'"
+            fullPath +
+            "'"
           );
         }
 
         if (n.path.length > 0 && n.path[n.path.length - 1] === "/") {
           throw new Error(
             "catch-all conflicts with existing handle for the path segment root in path '" +
-              fullPath +
-              "'"
+            fullPath +
+            "'"
           );
         }
 
