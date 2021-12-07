@@ -11,6 +11,7 @@ class Router {
     if (!(this instanceof Router)) {
       return new Router(opts);
     }
+    this.handlers = [];
     this.trees = {};
     this.opts = opts;
   }
@@ -18,6 +19,7 @@ class Router {
     if (path[0] !== "/") {
       throw new Error("path must begin with '/' in path");
     }
+    handle.unshift(...this.handlers);
     if (!this.trees[method]) {
       this.trees[method] = new Node();
     }
@@ -56,6 +58,9 @@ class Router {
       this.on(method, ...arg);
     });
     return this;
+  }
+  use(...handle) {
+    this.handlers.push(...handle);
   }
   find(method, path) {
     const tree = this.trees[method];

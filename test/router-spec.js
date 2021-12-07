@@ -1,7 +1,7 @@
 const expect = require("expect");
 const Router = require("../router");
 
-const noOp = [function() {}];
+const noOp = function() {};
 
 describe("Router", () => {
   it("works!", () => {
@@ -79,5 +79,13 @@ describe("Router", () => {
     expect(router.find("OPTIONS", "/").handle).toBeTruthy();
     expect(router.find("TRACE", "/").handle).toBeTruthy();
     expect(router.find("CONNECT", "/").handle).toBeTruthy();
+  });
+
+  it("uses middleware from `use` in `on`", () => {
+    const router = new Router();
+    router.use(noOp);
+    router.on("GET", "/", noOp);
+    expect(router.find("GET", "/").handle).toBeTruthy();
+    expect(router.find("GET", "/").handle).toHaveLength(2);
   });
 });

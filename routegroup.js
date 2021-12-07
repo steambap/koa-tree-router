@@ -16,6 +16,7 @@ class RouteGroup {
     if (path[path.length - 1] === "/") {
       path = path.substr(0, path.length - 1);
     }
+    this.handlers = [];
     this.r = router;
     this.p = path;
   }
@@ -39,6 +40,7 @@ class RouteGroup {
     return new RouteGroup(this.r, this.subpath(path));
   }
   on(method, path, ...handle) {
+    handle.unshift(...this.handlers);
     return this.r.on(method, this.subpath(path), ...handle);
   }
   get(...arg) {
@@ -73,6 +75,9 @@ class RouteGroup {
       this.on(method, ...arg);
     });
     return this;
+  }
+  use(...handle) {
+    this.handlers.push(...handle);
   }
   routes() {
     return this.r.routes();
