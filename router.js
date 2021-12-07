@@ -108,7 +108,7 @@ class Router {
    * @param {string} path
    */
   newGroup(path) {
-    return new RouteGroup(this, path);
+    return new RouteGroup(this, path, this.handlers);
   }
 }
 

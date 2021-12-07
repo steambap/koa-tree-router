@@ -131,6 +131,8 @@ app.use(router.routes());
 app.listen(8080);
 ```
 
+Middleware added with `use()` are also added to the nested routes.
+
 #### ctx.params
 This object contains key-value pairs of named route parameters.
 

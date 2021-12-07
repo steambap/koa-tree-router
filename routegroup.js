@@ -8,7 +8,7 @@ class RouteGroup {
    * @param {*} router
    * @param {string} path
    */
-  constructor(router, path) {
+  constructor(router, path, handlers = []) {
     if (path[0] !== "/") {
       throw new Error("path must begin with '/' in path '" + path + "'");
     }
@@ -16,7 +16,7 @@ class RouteGroup {
     if (path[path.length - 1] === "/") {
       path = path.substr(0, path.length - 1);
     }
-    this.handlers = [];
+    this.handlers = [...handlers];
     this.r = router;
     this.p = path;
   }
@@ -37,7 +37,7 @@ class RouteGroup {
    * @param {string} path
    */
   newGroup(path) {
-    return new RouteGroup(this.r, this.subpath(path));
+    return new RouteGroup(this.r, this.subpath(path), this.handlers);
   }
   on(method, path, ...handle) {
     handle.unshift(...this.handlers);
