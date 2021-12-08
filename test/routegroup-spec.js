@@ -29,4 +29,11 @@ describe("Route Group", () => {
     expect(r.find("GET", "/foo/bar").handle).toBeTruthy();
     expect(r.find("GET", "/foo/bar").handle).toHaveLength(2);
   });
+
+  it("works with multiple handle", () => {
+    const r = new Router();
+    const group = new RouteGroup(r, "/foo");
+    group.get("/bar", noOp, noOp, noOp);
+    expect(r.find("GET", "/foo/bar").handle).toHaveLength(3);
+  });
 });

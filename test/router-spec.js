@@ -88,4 +88,10 @@ describe("Router", () => {
     expect(router.find("GET", "/").handle).toBeTruthy();
     expect(router.find("GET", "/").handle).toHaveLength(2);
   });
+
+  it("works with multiple handle", () => {
+    const router = new Router();
+    router.get("/", noOp, noOp, noOp);
+    expect(router.find("GET", "/").handle).toHaveLength(3);
+  });
 });
