@@ -2,7 +2,7 @@ const expect = require("expect");
 const Router = require("../router");
 const RouteGroup = require("../routegroup");
 
-const noOp = [function () {}];
+const noOp = function () {};
 
 describe("Route Group", () => {
   it("works!", () => {
@@ -19,5 +19,14 @@ describe("Route Group", () => {
     group.get("/foo", noOp);
     expect(r.find("POST", "/bar").handle).toBeTruthy();
     expect(r.find("GET", "/bar/foo").handle).toBeTruthy();
+  });
+
+  it("uses middleware from `use` in `on`", () => {
+    const r = new Router();
+    const group = new RouteGroup(r, "/foo");
+    group.use(noOp);
+    group.get("/bar", noOp);
+    expect(r.find("GET", "/foo/bar").handle).toBeTruthy();
+    expect(r.find("GET", "/foo/bar").handle).toHaveLength(2);
   });
 });

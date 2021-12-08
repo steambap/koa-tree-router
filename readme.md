@@ -88,6 +88,22 @@ If you need a route that supports *all* methods you can use the `all` api.
 router.all(path, middleware)
 ```
 
+#### use(middleware)
+You can add middleware that is added to all future routes:
+```js
+router.use(authMiddleware);
+router.get("/foo", (ctx) => { /* your code */ });
+router.get("/bar", (ctx) => { /* your code */ });
+router.get("/baz", (ctx) => { /* your code */ });
+```
+
+This is equivalent to:
+```js
+router.get("/foo", authMiddleware, (ctx) => { /* your code */ });
+router.get("/bar", authMiddleware, (ctx) => { /* your code */ });
+router.get("/baz", authMiddleware, (ctx) => { /* your code */ });
+```
+
 #### routes
 Returns router middleware.
 
@@ -114,6 +130,8 @@ app.use(router.routes());
 
 app.listen(8080);
 ```
+
+Middleware added with `use()` are also added to the nested routes.
 
 #### ctx.params
 This object contains key-value pairs of named route parameters.
