@@ -180,6 +180,9 @@ Pattern: /src/*filepath
  /src/subdir/somefile.go   match
 ```
 
+## Typescript Support
+This package has its own declaration files in NPM package, you don't have to do anything extra.
+
 ## License
 
 [MIT](LICENSE)
