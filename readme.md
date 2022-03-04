@@ -103,6 +103,7 @@ router.get("/foo", authMiddleware, (ctx) => { /* your code */ });
 router.get("/bar", authMiddleware, (ctx) => { /* your code */ });
 router.get("/baz", authMiddleware, (ctx) => { /* your code */ });
 ```
+**Caveat**: `use` must be called before register a new handler. It does not append handlers to registered routes.
 
 #### routes
 Returns router middleware.

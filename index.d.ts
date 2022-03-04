@@ -105,6 +105,11 @@ declare class Router<StateT = any, CustomT = {}> {
     ...middleware: Array<Router.Middleware<StateT, CustomT>>
   ): this;
   /**
+   * Prepend handlers to all future routes
+   * Must be called before register new handlers
+   */
+  use( ...middleware: Array<Router.Middleware<StateT, CustomT>>): void;
+  /**
    * Register route with all methods.
    */
   all(
@@ -204,6 +209,11 @@ declare class RouteGroup<StateT = any, CustomT = {}> {
     path: string,
     ...middleware: Array<Router.Middleware<StateT, CustomT>>
   ): this;
+  /**
+   * Prepend handlers to all future routes in the group
+   * Must be called before register new handlers
+   */
+  use( ...middleware: Array<Router.Middleware<StateT, CustomT>>): void;
   /**
    * Returns router middleware.
    */
