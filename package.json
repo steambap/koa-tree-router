@@ -34,9 +34,9 @@
   "typings": "index.d.ts",
   "devDependencies": {
     "expect": "^27.2.0",
-    "koa": "^2.13.0",
+    "koa": "^2.13.4",
     "mocha": "^9.1.1",
-    "supertest": "^6.2.2"
+    "supertest": "^6.2.3"
   },
   "dependencies": {
     "@types/koa": "^2.13.4",
