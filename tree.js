@@ -23,7 +23,7 @@ function findWildcard(path) {
         return {
           wildcard: path.slice(i, i + 1 + end),
           i,
-          valid
+          valid,
         };
       }
       if (char === ":" || char === "*") {
@@ -34,14 +34,14 @@ function findWildcard(path) {
     return {
       wildcard: path.slice(i),
       i,
-      valid
+      valid,
     };
   }
 
   return {
     wildcard: "",
     i: -1,
-    valid: false
+    valid: false,
   };
 }
 
@@ -246,28 +246,28 @@ class Node {
       if (!valid) {
         throw new Error(
           "only one wildcard per path segment is allowed, has: '" +
-          wildcard +
-          "' in path '" +
-          fullPath +
-          "'"
+            wildcard +
+            "' in path '" +
+            fullPath +
+            "'"
         );
       }
 
       if (wildcard.length < 2) {
         throw new Error(
           "wildcards must be named with a non-empty name in path '" +
-          fullPath +
-          "'"
+            fullPath +
+            "'"
         );
       }
 
       if (n.children.length > 0) {
         throw new Error(
           "wildcard route '" +
-          wildcard +
-          "' conflicts with existing children in path '" +
-          fullPath +
-          "'"
+            wildcard +
+            "' conflicts with existing children in path '" +
+            fullPath +
+            "'"
         );
       }
 
@@ -299,19 +299,19 @@ class Node {
         return;
       } else {
         // catchAll
-        if (i + wildcard.length != path.length) {
+        if (i + wildcard.length !== path.length) {
           throw new Error(
             "catch-all routes are only allowed at the end of the path in path '" +
-            fullPath +
-            "'"
+              fullPath +
+              "'"
           );
         }
 
         if (n.path.length > 0 && n.path[n.path.length - 1] === "/") {
           throw new Error(
             "catch-all conflicts with existing handle for the path segment root in path '" +
-            fullPath +
-            "'"
+              fullPath +
+              "'"
           );
         }
 
@@ -358,6 +358,7 @@ class Node {
     let handle = null;
     const params = [];
     let n = this;
+    let tsr = false;
 
     walk: while (true) {
       if (path.length > n.path.length) {
@@ -376,7 +377,10 @@ class Node {
             }
 
             // Nothing found.
-            return { handle, params };
+            // We can recommend to redirect to the same URL without a
+            // trailing slash if a leaf exists for that path.
+            tsr = path === "/" && n.handle !== null;
+            return { handle, params, tsr };
           }
 
           // Handle wildcard child
@@ -401,12 +405,21 @@ class Node {
                 }
 
                 // ... but we can't
-                return { handle, params };
+                tsr = path.length === end + 1;
+                return { handle, params, tsr };
               }
 
               handle = n.handle;
+              if (handle === null && n.children.length === 1) {
+                // No handle found. Check if a handle for this path + a
+                // trailing slash exists for TSR recommendation
+                n = n.children[0];
+                tsr =
+                  (n.path === "/" && n.handle !== null) ||
+                  (n.path === "" && n.indices === "/");
+              }
 
-              return { handle, params };
+              return { handle, params, tsr };
 
             case CATCH_ALL:
               params.push({ key: n.path.slice(2), value: path });
@@ -420,9 +433,49 @@ class Node {
         }
       } else if (path === n.path) {
         handle = n.handle;
-      }
+        // We should have reached the node containing the handle.
+        // Check if this node has a handle registered.
+        if (handle !== null) {
+          return { handle, params, tsr };
+        }
+        // If there is no handle for this route, but this route has a
+        // wildcard child, there must be a handle for this path with an
+        // additional trailing slash
+        if (path === "/" && n.wildChild && n.type !== ROOT) {
+          tsr = true;
+          return { handle, params, tsr };
+        }
 
-      return { handle, params };
+        if (path === "/" && n.type === STATIC) {
+          tsr = true;
+          return { handle, params, tsr };
+        }
+
+        // No handle found. Check if a handle for this path + a
+        // trailing slash exists for trailing slash recommendation
+        for (let i = 0; i < n.indices.length; i++) {
+          const char = n.indices[i];
+          if (char === "/") {
+            n = n.children[i];
+            tsr =
+              (n.path.length === 1 && n.handle !== null) ||
+              (n.type === CATCH_ALL && n.children[0].handle !== null);
+
+            return { handle, params, tsr };
+          }
+        }
+
+        return { handle, params, tsr };
+      }
+      // Nothing found. We can recommend to redirect to the same URL with an
+      // extra trailing slash if a leaf exists for that path
+      tsr =
+        path === "/" ||
+        (n.path.length === path.length + 1 &&
+          n.path[path.length] === "/" &&
+          path === n.path.slice(0, n.path.length - 1) &&
+          n.handle !== null);
+      return { handle, params, tsr };
     }
   }
 }

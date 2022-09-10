@@ -58,7 +58,14 @@ const router = require('koa-tree-router')({
   onMethodNotAllowed(ctx){
     ctx.body = "not allowed"
   }
-})
+});
+```
+
+You can also allow trailing slash redirect `redirectTrailingSlash`.
+```js
+const router = require('koa-tree-router')({
+  redirectTrailingSlash: true
+});
 ```
 
 #### on(method, path, middleware)

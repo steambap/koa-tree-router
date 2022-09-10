@@ -4,7 +4,7 @@ const Node = require("./tree");
 const RouteGroup = require("./routegroup");
 
 const httpMethods = http.METHODS;
-const NOT_FOUND = { handle: null, params: [] };
+const NOT_FOUND = { handle: null, params: [], tsr: false };
 
 class Router {
   constructor(opts = {}) {
@@ -72,8 +72,23 @@ class Router {
   routes() {
     const router = this;
     const handle = function (ctx, next) {
-      const { handle, params } = router.find(ctx.method, ctx.path);
+      const { handle, params, tsr } = router.find(ctx.method, ctx.path);
       if (!handle) {
+        if (tsr && router.opts.redirectTrailingSlash) {
+          const { path, search } = ctx.request;
+
+          if (path !== "/" && path.slice(-1) === "/") {
+            const redirectUrl = path.slice(0, -1) + search;
+            ctx.response.status = 301;
+            ctx.redirect(redirectUrl);
+            return;
+          } else {
+            const redirectUrl = path + "/" + search;
+            ctx.response.status = 301;
+            ctx.redirect(redirectUrl);
+            return;
+          }
+        }
         const handle405 = router.opts.onMethodNotAllowed;
         if (handle405) {
           const allowList = [];
