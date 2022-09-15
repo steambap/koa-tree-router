@@ -1,7 +1,7 @@
 const expect = require("expect");
 const Tree = require("../tree");
 
-Tree.prototype.printTree = function (prefix = "") {
+Tree.prototype.printTree = function(prefix = "") {
   console.log(
     " %d %s%s[%d] %s %s %d \r\n",
     this.priority,
@@ -15,12 +15,12 @@ Tree.prototype.printTree = function (prefix = "") {
   for (let l = this.path.length; l > 0; l--) {
     prefix += " ";
   }
-  this.children.forEach((child) => {
+  this.children.forEach(child => {
     child.printTree(prefix);
   });
 };
 
-const noOp = [function () {}];
+const noOp = [function() {}];
 
 describe("Add and get", () => {
   const tree = new Tree();
@@ -35,10 +35,10 @@ describe("Add and get", () => {
     "/doc/node_faq.html",
     "/doc/node1.html",
     "/α",
-    "/β",
+    "/β"
   ];
 
-  routes.forEach((route) => {
+  routes.forEach(route => {
     tree.addRoute(route, noOp);
   });
 
@@ -47,51 +47,51 @@ describe("Add and get", () => {
   const testData = [
     {
       route: "/a",
-      found: true,
+      found: true
     },
     {
       route: "/",
-      found: false,
+      found: false
     },
     {
       route: "/hi",
-      found: true,
+      found: true
     },
     {
       route: "/contact",
-      found: true,
+      found: true
     },
     {
       route: "/co",
-      found: true,
+      found: true
     },
     {
       route: "/con",
-      found: false,
+      found: false
     },
     {
       route: "/cona",
-      found: false,
+      found: false
     },
     {
       route: "/no",
-      found: false,
+      found: false
     },
     {
       route: "/ab",
-      found: true,
+      found: true
     },
     {
       route: "/α",
-      found: true,
+      found: true
     },
     {
       route: "/β",
-      found: true,
-    },
+      found: true
+    }
   ];
 
-  testData.forEach((data) => {
+  testData.forEach(data => {
     it(data.route, () => {
       const { handle } = tree.search(data.route);
       if (data.found) {
@@ -119,10 +119,10 @@ describe("Wildcard", () => {
     "/doc/node_faq.html",
     "/doc/node1.html",
     "/info/:user/public",
-    "/info/:user/project/:project",
+    "/info/:user/project/:project"
   ];
 
-  routes.forEach((route) => {
+  routes.forEach(route => {
     tree.addRoute(route, noOp);
   });
 
@@ -131,64 +131,61 @@ describe("Wildcard", () => {
   const foundData = [
     {
       route: "/",
-      params: [],
+      params: []
     },
     {
       route: "/cmd/test/",
-      params: [{ key: "tool", value: "test" }],
+      params: [{ key: "tool", value: "test" }]
     },
     {
       route: "/cmd/test/3",
-      params: [
-        { key: "tool", value: "test" },
-        { key: "sub", value: "3" },
-      ],
+      params: [{ key: "tool", value: "test" }, { key: "sub", value: "3" }]
     },
     {
       route: "/src/",
-      params: [{ key: "filepath", value: "/" }],
+      params: [{ key: "filepath", value: "/" }]
     },
     {
       route: "/src/some/file.png",
-      params: [{ key: "filepath", value: "/some/file.png" }],
+      params: [{ key: "filepath", value: "/some/file.png" }]
     },
     {
       route: "/search/",
-      params: [],
+      params: []
     },
     {
       route: "/search/中文",
-      params: [{ key: "query", value: "中文" }],
+      params: [{ key: "query", value: "中文" }]
     },
     {
       route: "/user_noder",
-      params: [{ key: "name", value: "noder" }],
+      params: [{ key: "name", value: "noder" }]
     },
     {
       route: "/user_noder/about",
-      params: [{ key: "name", value: "noder" }],
+      params: [{ key: "name", value: "noder" }]
     },
     {
       route: "/files/js/inc/framework.js",
       params: [
         { key: "dir", value: "js" },
-        { key: "filepath", value: "/inc/framework.js" },
-      ],
+        { key: "filepath", value: "/inc/framework.js" }
+      ]
     },
     {
       route: "/info/gordon/public",
-      params: [{ key: "user", value: "gordon" }],
+      params: [{ key: "user", value: "gordon" }]
     },
     {
       route: "/info/gordon/project/node",
       params: [
         { key: "user", value: "gordon" },
-        { key: "project", value: "node" },
-      ],
-    },
+        { key: "project", value: "node" }
+      ]
+    }
   ];
 
-  foundData.forEach((data) => {
+  foundData.forEach(data => {
     it(data.route, () => {
       const { handle, params } = tree.search(data.route);
       expect(handle).toBeTruthy();
@@ -199,15 +196,15 @@ describe("Wildcard", () => {
   const noHandlerData = [
     {
       route: "/cmd/test",
-      params: [{ key: "tool", value: "test" }],
+      params: [{ key: "tool", value: "test" }]
     },
     {
       route: "/search/中文/",
-      params: [{ key: "query", value: "中文" }],
-    },
+      params: [{ key: "query", value: "中文" }]
+    }
   ];
 
-  noHandlerData.forEach((data) => {
+  noHandlerData.forEach(data => {
     it(data.route, () => {
       const { handle, params } = tree.search(data.route);
       expect(handle).toBeNull();
@@ -232,81 +229,5 @@ describe("Invalid", () => {
     tree.addRoute("/src3/*filepath", noOp);
 
     expect(() => tree.addRoute("/src3/*filepath/x", noOp)).toThrow();
-  });
-});
-
-describe("trailing slash redirect", () => {
-  const tree = new Tree();
-
-  before(() => {
-    const routes = [
-      "/hi",
-      "/b/",
-      "/search/:query",
-      "/cmd/:tool/",
-      "/src/*filepath",
-      "/x",
-      "/x/y",
-      "/y/",
-      "/y/z",
-      "/0/:id",
-      "/0/:id/1",
-      "/1/:id/",
-      "/1/:id/2",
-      "/aa",
-      "/a/",
-      "/admin",
-      "/admin/:category",
-      "/admin/:category/:page",
-      "/doc",
-      "/doc/go_faq.html",
-      "/doc/go1.html",
-      "/no/a",
-      "/no/b",
-      "/api/hello/:name",
-      "/vendor/:x/*y",
-    ];
-
-    routes.forEach((r) => {
-      tree.addRoute(r, noOp);
-    });
-  });
-
-  it("recommand redirect", () => {
-    const tsrRoutes = [
-      "/hi/",
-      "/b",
-      "/search/gopher/",
-      "/cmd/vet",
-      "/src",
-      "/x/",
-      "/y",
-      "/0/go/",
-      "/1/go",
-      "/a",
-      "/admin/",
-      "/admin/config/",
-      "/admin/config/permissions/",
-      "/doc/",
-      "/vendor/x",
-    ];
-
-    tsrRoutes.forEach((route) => {
-      const { handle, tsr } = tree.search(route);
-
-      expect(handle).toBeNull();
-      expect(tsr).toBe(true);
-    });
-  });
-
-  it("has no redirect", () => {
-    const noTsrRoutes = ["/", "/no", "/no/", "/_", "/_/", "/api/world/abc"];
-
-    noTsrRoutes.forEach((route) => {
-      const { handle, tsr } = tree.search(route);
-
-      expect(handle).toBeNull();
-      expect(tsr).toBe(false);
-    });
-  });
+  })
 });
