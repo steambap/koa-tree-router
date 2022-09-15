@@ -6,6 +6,13 @@ const RouteGroup = require("./routegroup");
 const httpMethods = http.METHODS;
 const NOT_FOUND = { handle: null, params: [] };
 
+function trimLastSlash(path) {
+  if (path.length > 1 && path.charCodeAt(path.length - 1) === 47) {
+    return path.slice(0, -1);
+  }
+  return path;
+}
+
 class Router {
   constructor(opts = {}) {
     if (!(this instanceof Router)) {
@@ -65,6 +72,9 @@ class Router {
   find(method, path) {
     const tree = this.trees[method];
     if (tree) {
+      if (this.opts.ignoreTrailingSlash) {
+        path = trimLastSlash(path);
+      }
       return tree.search(path);
     }
     return NOT_FOUND;
