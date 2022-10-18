@@ -52,12 +52,12 @@ app.listen(8080);
 
 #### Router([options])
 Instance a new router.  
-You can pass a middleware with the option `onMethodNotAllowed`.
 ```js
 const router = require('koa-tree-router')({
   onMethodNotAllowed(ctx){
     ctx.body = "not allowed"
-  }
+  },
+  ignoreTrailingSlash: true
 })
 ```
 
