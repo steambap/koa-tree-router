@@ -1,6 +1,5 @@
 const Koa = require("koa");
 const request = require("supertest");
-const expect = require("expect");
 const Router = require("../router");
 
 describe("Router", () => {

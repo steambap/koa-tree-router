@@ -1,4 +1,3 @@
-const expect = require("expect");
 const Tree = require("../tree");
 
 Tree.prototype.printTree = function(prefix = "") {
