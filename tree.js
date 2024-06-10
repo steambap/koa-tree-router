@@ -81,6 +81,7 @@ class Node {
   ) {
     this.path = path;
     this.wildChild = wildChild;
+    this.wildChildIdx = -1;
     this.type = type;
     this.indices = indices;
     this.children = children;
@@ -139,7 +140,7 @@ class Node {
       let i = longestCommonPrefix(path, n.path);
 
       // Split edge
-      if (i < n.path.length) {
+      if (i && i < n.path.length) {
         const child = new Node(
           n.path.slice(i),
           n.wildChild,
@@ -162,16 +163,17 @@ class Node {
         path = path.slice(i);
 
         if (n.wildChild) {
-          n = n.children[0];
+          n = n.children[n.wildChildIdx];
           n.priority++;
 
           // Check if the wildcard matches
           if (
-            path.length >= n.path.length &&
-            n.path === path.slice(0, n.path.length) &&
+            (n.type === STATIC || (
+              (n.path.length >= path.length || path[n.path.length] === "/") &&
+              n.path === path.slice(0, n.path.length)
+            )) &&
             // Adding a child to a catchAll is not possible
-            n.type !== CATCH_ALL &&
-            (n.path.length >= path.length || path[n.path.length] === "/")
+            n.type !== CATCH_ALL
           ) {
             continue walk;
           } else {
@@ -261,16 +263,6 @@ class Node {
         );
       }
 
-      if (n.children.length > 0) {
-        throw new Error(
-          "wildcard route '" +
-          wildcard +
-          "' conflicts with existing children in path '" +
-          fullPath +
-          "'"
-        );
-      }
-
       if (wildcard[0] === ":") {
         // param
         if (i > 0) {
@@ -280,8 +272,9 @@ class Node {
         }
 
         n.wildChild = true;
+        n.wildChildIdx = n.children.length;
         const child = new Node(wildcard, false, PARAM);
-        n.children = [child];
+        n.children.push(child);
         n = child;
         n.priority++;
 
@@ -352,78 +345,105 @@ class Node {
   }
   /**
    *
-   * @param {string} path
+   * @param {string} ipath
    */
-  search(path) {
-    let handle = null;
-    const params = [];
+  search(ipath) {
+    let path = ipath;
     let n = this;
+    let params = [];
+    let handle = null;
+    let skip = 0;
+    let bk = [[path, n, params, handle, skip]];
 
-    walk: while (true) {
-      if (path.length > n.path.length) {
-        if (path.slice(0, n.path.length) === n.path) {
-          path = path.slice(n.path.length);
-          // If this node does not have a wildcard child,
-          // we can just look up the next child node and continue
-          // to walk down the tree
-          if (!n.wildChild) {
-            const c = path.charCodeAt(0);
-            for (let i = 0; i < n.indices.length; i++) {
-              if (c === n.indices.charCodeAt(i)) {
-                n = n.children[i];
-                continue walk;
-              }
-            }
+    srch: while (bk.length) {
+      [path, n, params, handle, skip] = bk.pop();
 
-            // Nothing found.
-            return { handle, params };
-          }
+      walk: while (true) {
+        const wpath = path
 
-          // Handle wildcard child
-          n = n.children[0];
-          switch (n.type) {
-            case PARAM:
-              // Find param end
-              let end = 0;
-              while (end < path.length && path.charCodeAt(end) !== 47) {
-                end++;
-              }
-
-              // Save param value
-              params.push({ key: n.path.slice(1), value: path.slice(0, end) });
-
-              // We need to go deeper!
-              if (end < path.length) {
-                if (n.children.length > 0) {
-                  path = path.slice(end);
-                  n = n.children[0];
+        if (path.length > n.path.length) {
+          if (path.slice(0, n.path.length) === n.path) {
+            path = path.slice(n.path.length);
+            // If this node does not have a wildcard child,
+            // we can just look up the next child node and continue
+            // to walk down the tree
+            if (!n.wildChild) {
+              const c = path.charCodeAt(0);
+              for (let i = 0; i < n.indices.length; i++) {
+                if (c === n.indices.charCodeAt(i)) {
+                  n = n.children[i];
                   continue walk;
                 }
-
-                // ... but we can't
-                return { handle, params };
               }
 
-              handle = n.handle;
+              // Nothing found.
+              continue srch;
+            }
 
-              return { handle, params };
+            // Handle wildcard child
+            for (let i = skip; i < n.children.length; i++) {
+              skip = 0;
+              if (i < n.children.length - 1) {
+                // has more children to lookup in case nothing will be found
+                bk.push([wpath, n, params.slice(0), handle, i + 1])
+              }
 
-            case CATCH_ALL:
-              params.push({ key: n.path.slice(2), value: path });
+              n = n.children[i];
 
-              handle = n.handle;
-              return { handle, params };
+              switch (n.type) {
+                case PARAM:
+                  // Find param end
+                  let end = 0;
+                  while (end < path.length && path.charCodeAt(end) !== 47) {
+                    end++;
+                  }
 
-            default:
-              throw new Error("invalid node type");
+                  // Save param value
+                  params.push({ key: n.path.slice(1), value: path.slice(0, end) });
+
+                  // We need to go deeper!
+                  if (end < path.length) {
+                    if (n.children.length > 0) {
+                      path = path.slice(end);
+                      n = n.children[0];
+                      continue walk;
+                    }
+
+                    // ... but we can't
+                    return { handle, params };
+                  }
+
+                  handle = n.handle;
+
+                  if (!handle) {
+                    continue srch;
+                  }
+
+                  return { handle, params };
+
+                case CATCH_ALL:
+                  params.push({ key: n.path.slice(2), value: path });
+
+                  handle = n.handle;
+                  return { handle, params };
+
+                default:
+                  continue walk;
+              }
+            }
           }
+        } else if (path === n.path) {
+          handle = n.handle;
         }
-      } else if (path === n.path) {
-        handle = n.handle;
-      }
 
-      return { handle, params };
+        if (!handle) {
+          continue srch;
+        }
+
+        break srch;
+      }
     }
+    return { handle, params };
   }
 }
 

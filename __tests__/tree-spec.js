@@ -106,8 +106,9 @@ describe("Wildcard", () => {
   const tree = new Tree();
   const routes = [
     "/",
-    "/cmd/:tool/:sub",
+    "/cmd/foo/bar",
     "/cmd/:tool/",
+    "/cmd/:tool/:sub",
     "/src/*filepath",
     "/search/",
     "/search/:query",
@@ -130,6 +131,10 @@ describe("Wildcard", () => {
   const foundData = [
     {
       route: "/",
+      params: []
+    },
+    {
+      route: "/cmd/foo/bar",
       params: []
     },
     {
