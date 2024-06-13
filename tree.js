@@ -168,12 +168,13 @@ class Node {
 
           // Check if the wildcard matches
           if (
-            (n.type === STATIC || (
-              (n.path.length >= path.length || path[n.path.length] === "/") &&
-              n.path === path.slice(0, n.path.length)
-            )) &&
             // Adding a child to a catchAll is not possible
-            n.type !== CATCH_ALL
+            n.type !== CATCH_ALL &&
+            path.length >= n.path.length &&
+            // exactly matches wildcard and ...v
+            n.path === path.slice(0, n.path.length) &&
+            // either exact match or starts a new subpath by slash
+            (n.path.length === path.length || path[n.path.length] === "/")
           ) {
             continue walk;
           } else {
