@@ -427,8 +427,11 @@ class Node {
                   handle = n.handle;
                   return { handle, params };
 
-                default:
+                case STATIC:
                   continue walk;
+
+                default:
+                  throw new Error("invalid node type");
               }
             }
           }
