@@ -349,15 +349,15 @@ class Node {
    * @param {string} path
    */
   search(path) {
-    let n = this;
-    let params = [];
+    let bk = null;
     let handle = null;
+    let params = [];
+    let n = this;
     let skip = 0;
-    let bk = [];
     let reset = false;
 
     walk: while (true) {
-      if (reset && bk.length) {
+      if (reset) {
         ({path, n, params, handle, skip} = bk.pop());
         reset = false;
       }
@@ -365,7 +365,7 @@ class Node {
       const wpath = path
 
       if (path.length > n.path.length) {
-        if (path.indexOf(n.path) === 0) {
+        if (path.slice(0, n.path.length) === n.path) {
           path = path.slice(n.path.length);
           // If this node does not have a wildcard child,
           // we can just look up the next child node and continue
@@ -380,7 +380,7 @@ class Node {
             }
 
             // Nothing found.
-            if (bk.length) {
+            if (bk && bk.length) {
               reset = true;
               continue walk;
             }
@@ -389,6 +389,9 @@ class Node {
 
           if (skip < n.wildChildIdx) {
             // has more children to lookup in case nothing will be found
+            if (!bk) {
+              bk = []
+            }
             bk.push({ path: wpath, n, params: params.slice(0), handle, skip: skip + 1 })
           }
 
@@ -421,7 +424,7 @@ class Node {
 
               handle = n.handle;
 
-              if (handle === null && bk.length) {
+              if (!handle && bk && bk.length) {
                 reset = true;
                 continue walk;
               }
@@ -445,7 +448,7 @@ class Node {
         handle = n.handle;
       }
 
-      if (handle === null && bk.length) {
+      if (!handle && bk && bk.length) {
         reset = true;
         continue walk;
       }
