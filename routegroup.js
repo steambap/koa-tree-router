@@ -41,7 +41,8 @@ class RouteGroup {
   }
   on(method, path, ...handle) {
     handle.unshift(...this.handlers);
-    return this.r.on(method, this.subpath(path), ...handle);
+    this.r.on(method, this.subpath(path), ...handle);
+    return this;
   }
   get(...arg) {
     return this.on("GET", ...arg);
