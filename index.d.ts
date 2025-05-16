@@ -27,6 +27,7 @@ declare namespace Router {
     StateT,
     CustomT & IRouterParamContext<StateT, CustomT>
   >;
+  export { RouteGroup };
 }
 
 declare class Router<StateT = any, CustomT = {}> {
