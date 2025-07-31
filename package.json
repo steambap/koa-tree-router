@@ -34,7 +34,7 @@
   "typings": "index.d.ts",
   "devDependencies": {
     "jest": "^29.7.0",
-    "koa": "^2.15.3",
+    "koa": "^3.0.1",
     "supertest": "^6.3.4"
   },
   "dependencies": {
