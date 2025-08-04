@@ -1,6 +1,6 @@
-const { test, describe } = require("node:test");
-const assert = require("node:assert");
-const Router = require("../router");
+import { test, describe } from "node:test";
+import assert, { throws, strictEqual } from "node:assert";
+import Router from "../router.js";
 
 const noOp = function() {};
 
@@ -11,7 +11,7 @@ describe("Router", () => {
 
   test("throws with invalid input", () => {
     const router = new Router();
-    assert.throws(() => router.on("GET", "invalid", noOp));
+    throws(() => router.on("GET", "invalid", noOp));
   });
 
   test("support `get`", () => {
@@ -87,12 +87,12 @@ describe("Router", () => {
     router.use(noOp);
     router.on("GET", "/", noOp);
     assert(router.find("GET", "/").handle);
-    assert.strictEqual(router.find("GET", "/").handle.length, 2);
+    strictEqual(router.find("GET", "/").handle.length, 2);
   });
 
   test("works with multiple handle", () => {
     const router = new Router();
     router.get("/", noOp, noOp, noOp);
-    assert.strictEqual(router.find("GET", "/").handle.length, 3);
+    strictEqual(router.find("GET", "/").handle.length, 3);
   });
 });

@@ -3,6 +3,7 @@
   "version": "0.13.1",
   "description": "A high performance koa router",
   "main": "router.js",
+  "type": "module",
   "scripts": {
     "test": "node --test"
   },
@@ -33,11 +34,11 @@
   "homepage": "https://github.com/steambap/koa-tree-router#readme",
   "typings": "index.d.ts",
   "devDependencies": {
-    "koa": "^2.15.3",
-    "supertest": "^6.3.4"
+    "koa": "^3.0.1",
+    "supertest": "^7.1.4"
   },
   "dependencies": {
-    "@types/koa": "^2.15.0",
+    "@types/koa": "^3.0.0",
     "koa-compose": "^4.1.0"
   },
   "pnpm": {

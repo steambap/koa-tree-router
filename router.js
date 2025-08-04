@@ -1,9 +1,8 @@
-const http = require("http");
-const compose = require("koa-compose");
-const Node = require("./tree");
-const RouteGroup = require("./routegroup");
+import { METHODS } from "node:http";
+import compose from "koa-compose";
+import Node from "./tree.js";
+import RouteGroup from "./routegroup.js";
 
-const httpMethods = http.METHODS;
 const NOT_FOUND = { handle: null, params: [] };
 
 function trimLastSlash(path) {
@@ -61,7 +60,7 @@ class Router {
     return this.on("CONNECT", ...arg);
   }
   all(...arg) {
-    httpMethods.forEach((method) => {
+    METHODS.forEach((method) => {
       this.on(method, ...arg);
     });
     return this;
@@ -122,4 +121,4 @@ class Router {
   }
 }
 
-module.exports = Router;
+export default Router;

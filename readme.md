@@ -34,12 +34,13 @@ yarn add koa-tree-router
 ## Usage
 
 ```JS
-const Koa = require("koa");
-const Router = require("koa-tree-router");
+import Koa from "koa";
+import Router from "koa-tree-router";
 
 const app = new Koa();
 const router = new Router();
-router.get("/", function(ctx) {
+
+router.get("/", (ctx) => {
   ctx.body = "hello, world";
 });
 
@@ -53,12 +54,14 @@ app.listen(8080);
 #### Router([options])
 Instance a new router.  
 ```js
-const router = require('koa-tree-router')({
-  onMethodNotAllowed(ctx){
-    ctx.body = "not allowed"
+import Router from "koa-tree-router";
+
+const router = new Router({
+  onMethodNotAllowed(ctx) {
+    ctx.body = "not allowed";
   },
   ignoreTrailingSlash: true
-})
+});
 ```
 
 #### on(method, path, middleware)
@@ -115,15 +118,15 @@ app.use(router.routes());
 #### nested routes
 A way to create groups of routes without incuring any per-request overhead.
 
-```JS
-const Koa = require("koa");
-const Router = require("koa-tree-router");
+```js
+import Koa from "koa";
+import Router from "koa-tree-router";
 
 const app = new Koa();
 const router = new Router();
 const group = router.newGroup("/foo");
 // add a handler for /foo/bar
-group.get("/bar", function(ctx) {
+group.get("/bar", (ctx) => {
   ctx.body = "hello, world";
 });
 

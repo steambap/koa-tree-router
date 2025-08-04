@@ -1,8 +1,8 @@
-const { test, describe } = require("node:test");
-const assert = require("node:assert");
-const Koa = require("koa");
-const request = require("supertest");
-const Router = require("../router");
+import { test, describe } from "node:test";
+import { strictEqual, deepStrictEqual } from "node:assert";
+import Koa from "koa";
+import request from "supertest";
+import Router from "../router.js";
 
 describe("Router", () => {
   test("should work", (t, done) => {
@@ -37,7 +37,7 @@ describe("Router", () => {
       .get("/")
       .expect(200)
       .end(function (err, res) {
-        assert.strictEqual(res.body, 2);
+        strictEqual(res.body, 2);
         done(err);
       });
   });
@@ -60,7 +60,7 @@ describe("Router", () => {
       .post("/")
       .expect(405)
       .end(function (err, res) {
-        assert.deepStrictEqual(res.body, resBody);
+        deepStrictEqual(res.body, resBody);
         done(err);
       });
   });
@@ -82,7 +82,7 @@ describe("Router", () => {
       .post("/users")
       .expect(405)
       .end(function (err, res) {
-        assert.strictEqual(res.header.allow, "GET, PUT");
+        strictEqual(res.header.allow, "GET, PUT");
         done(err);
       });
   });

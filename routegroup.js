@@ -1,6 +1,4 @@
-const http = require("http");
-
-const httpMethods = http.METHODS;
+import { METHODS } from "node:http";
 
 class RouteGroup {
   /**
@@ -72,7 +70,7 @@ class RouteGroup {
     return this.on("CONNECT", ...arg);
   }
   all(...arg) {
-    httpMethods.forEach((method) => {
+    METHODS.forEach((method) => {
       this.on(method, ...arg);
     });
     return this;
@@ -85,4 +83,4 @@ class RouteGroup {
   }
 }
 
-module.exports = RouteGroup;
+export default RouteGroup;

@@ -1,7 +1,7 @@
-const { test, describe } = require("node:test");
-const assert = require("node:assert");
-const Router = require("../router");
-const RouteGroup = require("../routegroup");
+import { test, describe } from "node:test";
+import assert, { strictEqual } from "node:assert";
+import Router from "../router.js";
+import RouteGroup from "../routegroup.js";
 
 const noOp = function () {};
 
@@ -28,13 +28,13 @@ describe("Route Group", () => {
     group.use(noOp);
     group.get("/bar", noOp);
     assert(r.find("GET", "/foo/bar").handle);
-    assert.strictEqual(r.find("GET", "/foo/bar").handle.length, 2);
+    strictEqual(r.find("GET", "/foo/bar").handle.length, 2);
   });
 
   test("works with multiple handle", () => {
     const r = new Router();
     const group = new RouteGroup(r, "/foo");
     group.get("/bar", noOp, noOp, noOp);
-    assert.strictEqual(r.find("GET", "/foo/bar").handle.length, 3);
+    strictEqual(r.find("GET", "/foo/bar").handle.length, 3);
   });
 });

@@ -1,6 +1,6 @@
-const { test, describe } = require("node:test");
-const assert = require("node:assert");
-const Tree = require("../tree");
+import { test, describe } from "node:test";
+import assert, { strictEqual, deepStrictEqual, throws } from "node:assert";
+import Tree from "../tree.js";
 
 Tree.prototype.printTree = function(prefix = "") {
   console.log(
@@ -98,7 +98,7 @@ describe("Add and get", () => {
       if (data.found) {
         assert(handle);
       } else {
-        assert.strictEqual(handle, null);
+        strictEqual(handle, null);
       }
     });
   });
@@ -190,7 +190,7 @@ describe("Wildcard", () => {
     test(data.route, () => {
       const { handle, params } = tree.search(data.route);
       assert(handle);
-      assert.deepStrictEqual(params, data.params);
+      deepStrictEqual(params, data.params);
     });
   });
 
@@ -208,8 +208,8 @@ describe("Wildcard", () => {
   noHandlerData.forEach(data => {
     test(data.route, () => {
       const { handle, params } = tree.search(data.route);
-      assert.strictEqual(handle, null);
-      assert.deepStrictEqual(params, data.params);
+      strictEqual(handle, null);
+      deepStrictEqual(params, data.params);
     });
   });
 });
@@ -222,13 +222,13 @@ describe("Invalid", () => {
 
     tree.children[0].type = 42;
 
-    assert.throws(() => tree.search("/test"));
+    throws(() => tree.search("/test"));
   });
 
   test("conflict", () => {
     const tree = new Tree();
     tree.addRoute("/src3/*filepath", noOp);
 
-    assert.throws(() => tree.addRoute("/src3/*filepath/x", noOp));
+    throws(() => tree.addRoute("/src3/*filepath/x", noOp));
   })
 });
