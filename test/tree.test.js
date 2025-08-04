@@ -1,3 +1,5 @@
+const { test, describe } = require("node:test");
+const assert = require("node:assert");
 const Tree = require("../tree");
 
 Tree.prototype.printTree = function(prefix = "") {
@@ -91,12 +93,12 @@ describe("Add and get", () => {
   ];
 
   testData.forEach(data => {
-    it(data.route, () => {
+    test(data.route, () => {
       const { handle } = tree.search(data.route);
       if (data.found) {
-        expect(handle).toBeTruthy();
+        assert(handle);
       } else {
-        expect(handle).toBeNull;
+        assert.strictEqual(handle, null);
       }
     });
   });
@@ -185,10 +187,10 @@ describe("Wildcard", () => {
   ];
 
   foundData.forEach(data => {
-    it(data.route, () => {
+    test(data.route, () => {
       const { handle, params } = tree.search(data.route);
-      expect(handle).toBeTruthy();
-      expect(params).toMatchObject(data.params);
+      assert(handle);
+      assert.deepStrictEqual(params, data.params);
     });
   });
 
@@ -204,29 +206,29 @@ describe("Wildcard", () => {
   ];
 
   noHandlerData.forEach(data => {
-    it(data.route, () => {
+    test(data.route, () => {
       const { handle, params } = tree.search(data.route);
-      expect(handle).toBeNull();
-      expect(params).toMatchObject(data.params);
+      assert.strictEqual(handle, null);
+      assert.deepStrictEqual(params, data.params);
     });
   });
 });
 
 describe("Invalid", () => {
-  it("node type", () => {
+  test("node type", () => {
     const tree = new Tree();
     tree.addRoute("/", noOp);
     tree.addRoute("/:page", noOp);
 
     tree.children[0].type = 42;
 
-    expect(() => tree.search("/test")).toThrow();
+    assert.throws(() => tree.search("/test"));
   });
 
-  it("conflict", () => {
+  test("conflict", () => {
     const tree = new Tree();
     tree.addRoute("/src3/*filepath", noOp);
 
-    expect(() => tree.addRoute("/src3/*filepath/x", noOp)).toThrow();
+    assert.throws(() => tree.addRoute("/src3/*filepath/x", noOp));
   })
 });

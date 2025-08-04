@@ -1,9 +1,11 @@
+const { test, describe } = require("node:test");
+const assert = require("node:assert");
 const Koa = require("koa");
 const request = require("supertest");
 const Router = require("../router");
 
 describe("Router", () => {
-  it("should work", (done) => {
+  test("should work", (t, done) => {
     const app = new Koa();
     const router = new Router();
     router.get("/", function (ctx) {
@@ -15,7 +17,7 @@ describe("Router", () => {
     request(app.callback()).get("/").expect(200, done);
   });
 
-  it("support multiple middleware", (done) => {
+  test("support multiple middleware", (t, done) => {
     const app = new Koa();
     const router = new Router();
     router.get(
@@ -35,12 +37,12 @@ describe("Router", () => {
       .get("/")
       .expect(200)
       .end(function (err, res) {
-        expect(res.body).toEqual(2);
+        assert.strictEqual(res.body, 2);
         done(err);
       });
   });
 
-  it("support 405 method not allowed", (done) => {
+  test("support 405 method not allowed", (t, done) => {
     const resBody = { msg: "not allowed" };
     const app = new Koa();
     const router = new Router({
@@ -58,12 +60,12 @@ describe("Router", () => {
       .post("/")
       .expect(405)
       .end(function (err, res) {
-        expect(res.body).toMatchObject(resBody);
+        assert.deepStrictEqual(res.body, resBody);
         done(err);
       });
   });
 
-  it("respond with 405 and correct header", (done) => {
+  test("respond with 405 and correct header", (t, done) => {
     const app = new Koa();
     const router = new Router({
       onMethodNotAllowed(ctx) {
@@ -80,12 +82,12 @@ describe("Router", () => {
       .post("/users")
       .expect(405)
       .end(function (err, res) {
-        expect(res.header).toHaveProperty("allow", "GET, PUT");
+        assert.strictEqual(res.header.allow, "GET, PUT");
         done(err);
       });
   });
 
-  it("handle #", (done) => {
+  test("handle #", (t, done) => {
     const app = new Koa();
     const router = new Router();
     router.get("/test", function (ctx) {
@@ -97,7 +99,7 @@ describe("Router", () => {
     request(app.callback()).get("/test#id").expect(200, done);
   });
 
-  it("handle ?", (done) => {
+  test("handle ?", (t, done) => {
     const app = new Koa();
     const router = new Router();
     router.get("/test", function (ctx) {
@@ -109,7 +111,7 @@ describe("Router", () => {
     request(app.callback()).get("/test?id=test").expect(200, done);
   });
 
-  it("ignore trailing slash", (done) => {
+  test("ignore trailing slash", (t, done) => {
     const app = new Koa();
     const router = new Router({
       ignoreTrailingSlash: true,
