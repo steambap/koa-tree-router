@@ -34,11 +34,11 @@
   "homepage": "https://github.com/steambap/koa-tree-router#readme",
   "typings": "index.d.ts",
   "devDependencies": {
-    "koa": "^3.0.1",
-    "supertest": "^7.1.4"
+    "koa": "^3.1.1",
+    "supertest": "^7.2.2"
   },
   "dependencies": {
-    "@types/koa": "^3.0.0",
+    "@types/koa": "^3.0.1",
     "koa-compose": "^4.1.0"
   },
   "pnpm": {
